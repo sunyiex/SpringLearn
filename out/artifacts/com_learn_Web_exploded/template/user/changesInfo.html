@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <#include "../common/header.html"/>
+
+    <title>个人信息修改</title>
+    <style>
+        body {
+            background: #ddd;
+        }
+
+        .btn-change {
+            margin-left: 50px;
+        }
+
+        .cardlist li {
+            margin-bottom: 10px;
+            padding-bottom: 2px;
+            border-bottom: 1px solid #44aacc;
+        }
+
+        h3 {
+            display: inline;
+        }
+
+        .cardbtn {
+            margin: 15px;
+        }
+
+        .modal {
+            display: none;
+        }
+
+        .cardlist .card {
+            display: inline-block;
+            width: 200px;
+        }
+    </style>
+</head>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <div class="container-fluid">
+                        <a data-target=".navbar-responsive-collapse" data-toggle="collapse" class="btn btn-navbar"><span
+                                class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a>
+                        <a href="./userCenter.html" class="brand">银行-个人账户中心</a>
+
+                        <div class="nav-collapse collapse navbar-responsive-collapse">
+                            <ul class="nav">
+                                <li>
+                                    <a href="/user/userCenter.do">信息查看</a>
+                                </li>
+                                <li class="active">
+                                    <a href="/user/changesInfo.do">个人信息修改</a>
+                                </li>
+                                <li>
+                                    <a href="/user/operation.do">存取款与转账</a>
+                                </li>
+                                <li>
+                                    <a href="/user/history.do">历史记录查询</a>
+                                </li>
+                                <li>
+                                    <a href="/user/logout.do">退出登录</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title" contenteditable="false">手机号</h3>
+                </div>
+
+                <div class="panel-body" contenteditable="false">您目前的手机号为： <span
+                        id="phoneNumber">${user.getPhone()!""}</span>
+                    <button class="btn btn-info btn-lg  btn-change" data-toggle="modal" id="J_phoneBtn"
+                            data-target="#modal">
+                        点击修改
+                    </button>
+                </div>
+            </div>
+
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title" contenteditable="false">电子邮箱号</h3>
+                </div>
+
+                <div class="panel-body panel-content" contenteditable="false">您目前的电子邮箱为： <span id="emailNumber">${user.getEmail()!""}</span>
+                    <button class="btn btn-info btn-lg btn-change" data-toggle="modal" id="J_emailBtn"
+                            data-target="#modal">
+                        点击修改
+                    </button>
+                </div>
+            </div>
+
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title" contenteditable="false">银行卡号</h3>
+                    <button class="btn btn-info btn-change" id="J_addCard" data-loading-text="新增中...">
+                        新增
+                    </button>
+                </div>
+
+                <div class="panel-body panel-content" contenteditable="false">
+                    <ol contenteditable="false" class="cardlist">
+                        <#list cardList as card>
+                            <li>
+                                <span class="card">${card.getCardNumber()}</span>
+
+                                <span class="card">卡号状态 ： ${card.getActiveFlag()}</span>
+                                <button class="btn btn-warning btn-change cardLoss" cardnumber="${card.getCardNumber()}"
+                                        data-toggle="modal"
+                                        data-target="#loss">
+                                    挂失
+                                </button>
+                                <button class="btn btn-danger btn-change cardDelete"
+                                        cardnumber="${card.getCardNumber()}" data-toggle="modal"
+                                        data-target="#delete">
+                                    删除
+                                </button>
+
+                            </li>
+                        </#list>
+                    </ol>
+
+
+                </div>
+            </div>
+
+            <!-- 模态框（Modal） -->
+            <div class="modal fade" id="modal" tabindex="-1" role="dialog"
+                 aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close"
+                                    data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="myModalLabel">
+                                手机修改
+                            </h4>
+                        </div>
+                        <form>
+                            <div class="modal-body">
+                                <label for="newVal">请输入<span id="newValname">手机号</span></label>
+                                <input type="text" id="newVal" name="newVal">
+                                <input type="text" id="newValType" name="type" style="display:none">
+                            </div>
+                            <div class="alert alert-danger valAlert" style="display: none">请输入正确的格式</div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default"
+                                        data-dismiss="modal">关闭
+                                </button>
+                                <button type="button" class="btn btn-info" id="sumbitNewVal" disabled="disabled">
+                                    提交更改
+                                </button>
+                            </div>
+                    </div>
+                    </form>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal -->
+            </div>
+        </div>
+
+        <div class="modal fade" id="delete" tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p>确定要删除卡号：<span id="deleteCardnumber"></span> 吗?</p>
+                        <label for="password">请输入密码</label> <input type="password" id="password"/>
+                        <button type="button" class="cardbtn btn btn-success"
+                                data-dismiss="modal">取消
+                        </button>
+                        <button type="button" id="deleteCard" class="cardbtn btn btn-danger" type="submit">
+                            确定
+                        </button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal -->
+        </div>
+
+        <div class="modal fade" id="loss" tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p>确定要挂失卡号：<span id="lossCardnumber"></span> 吗?</p>
+                        <button type="button" class="cardbtn btn btn-success"
+                                data-dismiss="modal">取消
+                        </button>
+                        <button type="button" id="lossCard" class="cardbtn btn btn-danger" type="submit">
+                            确定
+                        </button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal -->
+        </div>
+
+    </div>
+</div>
+<script>
+    var phoneRegExp = new RegExp(/^[0-9]{11,11}$/);
+    var emailRegRxp = new RegExp(/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/);
+    function inspection(input, regexp) {
+        var val = $(input).val();
+        var result = regexp.test(val);
+        if (result) {
+            $('.valAlert').hide(500);
+            $('#sumbitNewVal').prop('disabled', false);
+        }
+        else {
+            $('.valAlert').show(500);
+            $('#sumbitNewVal').prop('disabled', true);
+        }
+        return result;
+    }
+
+    function cphone() {
+        $('#newValname').text('手机号');
+        $('#newVal').val($('#phoneNumber').text());
+        $('#myModalLabel').text('手机修改');
+        $('#newValType').val('phone');
+        $("#newVal").unbind("keyup blur");
+        $("#newVal").bind("keyup blur", function () {
+        inspection(this, phoneRegExp);
+        });
+    }
+    function cemail() {
+        $('#newValname').text("电子邮箱");
+        $('#newVal').val($('#emailNumber').text());
+        $('#myModalLabel').text('电子邮箱');
+        $('#newValType').val('email');
+        $("#newVal").unbind("keyup blur");
+        $("#newVal").bind("keyup blur", function () {
+            inspection(this, emailRegRxp);
+        });
+    }
+
+    function changesInfo() {
+        $.ajax({
+            url: '/user/doChangeUserInfo.do?t=' + new Date().getTime(),
+            type: 'get',
+            scriptCharset: 'UTF-8',
+            dataType: "text",
+            data: {
+                newVal: $('#newVal').val(),
+                type: $('#newValType').val()
+            },
+            beforeSend: function () {
+                $('#sumbitNewVal').unbind('click');
+                $('#sumbitNewVal').prop('disable', true);
+            },
+            success: function (msg) {
+                $('#sumbitNewVal').bind('click', changesInfo);
+                $('#sumbitNewVal').prop('disable', true);
+                if (msg == 'success') {
+                    location.reload();
+                } else {
+                    alert(msg + " 请重新尝试！");
+                }
+            }
+        });
+    }
+    $('#sumbitNewVal').bind('click', changesInfo);
+    $('#J_phoneBtn').click(cphone);
+    $('#J_emailBtn').click(cemail);
+</script>
+
+<script>
+    function addBankCard() {
+        $.ajax({
+            url: '/user/addBankCard.do?t=' + new Date().getTime(),
+            type: 'get',
+            dataType: "text",
+            beforeSend: function () {
+                $('#J_addCard').unbind('click');
+                $('#J_addCard').prop('disable', true);
+            },
+            success: function (msg) {
+                $('#J_addCard').bind('click', addBankCard);
+                $('#J_addCard').prop('disable', true);
+                if (msg == 'success') {
+                    location.reload();
+                } else {
+                    alert(msg + " 请重新尝试！");
+                }
+            }
+        });
+    }
+    $('#J_addCard').bind('click', addBankCard);
+
+    $('.cardDelete').click(function () {
+        var cardnumber = $(this).attr("cardnumber");
+        $('#deleteCardnumber').text(cardnumber);
+    });
+    $('.cardLoss').click(function () {
+        var cardnumber = $(this).attr("cardnumber");
+        $('#lossCardnumber').text(cardnumber);
+    });
+    $('#deleteCard').click(function () {
+        $.ajax({
+            url: '/user/deleteBankCard.do?t=' + new Date().getTime(),
+            type: 'get',
+            dataType: "text",
+            data: {
+                cardNumber: $('#deleteCardnumber').text(),
+                password: $('#password').val()
+            },
+            success: function (msg) {
+                if (msg == 'success') {
+                    location.reload();
+                } else {
+                    alert(msg + " 请重新尝试！");
+                }
+            }
+        });
+    });
+    $('#lossCard').click(function () {
+        $.ajax({
+            url: '/user/doLossCard.do?t=' + new Date().getTime(),
+            type: 'get',
+            dataType: "text",
+            data: {cardNumber: $('#lossCardnumber').text()},
+            success: function (msg) {
+                if (msg == 'success') {
+                    location.reload();
+                } else {
+                    alert(msg + " 请重新尝试！");
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

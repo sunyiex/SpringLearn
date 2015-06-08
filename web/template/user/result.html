@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+
+<h3> message = ${message!""}</h3>
+<div >
+    <p id="show">请等待5秒后，自动跳转到会员首页</p>
+    <a href="/user/index.do">点击此处直接跳转</a>
+</div>
+
+<script>
+    var t = 5;//设定跳转的时间
+    setInterval("refer()", 1000); //启动1秒定时
+    function refer() {
+        t--;
+        if (t == 0) {
+            location = "/user/index.do"; //设定跳转的链接地址
+        }
+        document.getElementById('show').innerHTML = "请等待" + t + "秒后，自动跳转到会员首页"; //显示倒计时
+    }
+</script>
+</body>
+</html>
