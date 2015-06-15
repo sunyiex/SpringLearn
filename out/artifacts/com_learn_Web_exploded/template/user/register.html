@@ -56,6 +56,14 @@
         .IDCardRepeat{
             display: none;
         }
+        #kaptcha {
+            width: 66px;
+        }
+
+        .controls .changeCode .glyphicon{
+            top: 5px;
+            color: #66ccff;
+        }
     </style>
 </head>
 <body>
@@ -145,6 +153,18 @@
                         <div class="alert alert-danger" style="display: none">两次密码不相符</div>
 
                     </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="kaptcha"><b>验证码</b></label>
+
+                    <div class="controls">
+                        <input id="kaptcha" type="text" name="kaptcha"   maxlength="4"/>
+                        <a href="javascript:;" onclick="changeCode()" class="changeCode">
+                            <img src="" id="kaptchaImage" style="margin-bottom: -3px"/>
+                            <em class="glyphicon glyphicon-repeat"></em>
+                        </a>
+                    </div>
+
                 </div>
                 <div class="control-group">
                     <div class="controls">
@@ -260,7 +280,7 @@
 //        var error = $('.alert-danger');
         var result = true;
 //        input.each();
-        for(var i=0; i<input.length; i++){
+        for(var i=0; i<input.length-1; i++){
             if(!$(input.get(i)).hasClass("input-success")){
                 result = false;
             }
@@ -272,6 +292,15 @@
             $('#J_register').prop('disabled', true);
         }
     }
+</script>
+<script>
+    function changeCode() {
+        $('#kaptchaImage').attr('src', '/code/captcha-image.do?t=' + Math.floor(Math.random() * 100));
+    }
+    $('#kaptcha').bind('focus', function () {
+        changeCode();
+        $('#kaptcha').unbind('focus');
+    });
 </script>
 </body>
 </html>

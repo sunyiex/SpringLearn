@@ -1,51 +1,370 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<#include "../common/header.html"/>
+    <#include "../common/header.html"/>
+    <title>Document</title>
+    <style>
+        body {
+            background: silver;
+        }
 
-	<title>Document</title>
-	<style>
+        #cardInfoTable {
+            box-shadow: #222222;
+        }
 
-	</style>
+        #cardInfoTable .up td {
+            background-color: linen;
+            line-height: 36px;
+        }
+
+        #cardInfoTable .up:hover td {
+            background-color: white;
+            line-height: 36px;
+        }
+
+        #cardInfoTable .down-canuse td {
+            background-color: lightblue;
+            line-height: 46px;
+        }
+
+        #cardInfoTable .down-cannotuse td {
+            background-color: pink;
+            line-height: 46px;
+        }
+
+        #cardInfoTable .down-canuse:hover td {
+            background-color: deepskyblue;
+            line-height: 46px;
+        }
+
+        #cardInfoTable .down-cannotuse:hover td {
+            background-color: coral;
+            line-height: 46px;
+        }
+
+        #operation .button button, #transfer .button button {
+            margin-left: 50px;
+        }
+
+        #operation {
+            margin-left: 50px;
+        }
+
+        #operationCardnumber, #transferCardnumber {
+            color: orange;
+
+        }
+
+        #operationType, #transferType {
+            padding: 2px;
+            color: orangered;
+
+        }
+    </style>
 </head>
 <body>
-	<div class="container-fluid">
-		<div class="row-fluid">
-			<div class="span12">
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
 
-				<div class="navbar">
-					<div class="navbar-inner">
-						<div class="container-fluid">
-							<a data-target=".navbar-responsive-collapse" data-toggle="collapse" class="btn btn-navbar"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a> <a href="./userCenter.html" class="brand">银行-个人账户中心</a>
-							<div class="nav-collapse collapse navbar-responsive-collapse">
-								<ul class="nav">
-									<li >
-										<a href="/user/userCenter.do">信息查看</a>
-									</li>
-									<li>
-										<a href="/user/changesInfo.do">个人信息修改</a>
-									</li>
-									<li class="active">
-										<a href="/user/operation.do">存取款与转账</a>
-									</li>
-									<li>
-										<a href="/user/history.do">历史记录查询</a>
-									</li>
-									<li>
-										<a href="/user/logout.do">退出登录</a>
-									</li>
-								</ul>
-							</div>
-						</div>
-					</div>
-				</div>
+            <div class="navbar">
+                <div class="navbar-inner">
+                    <div class="container-fluid">
+                        <a data-target=".navbar-responsive-collapse" data-toggle="collapse" class="btn btn-navbar"><span
+                                class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a>
+                        <a href="/user/userCenter.do" class="brand">银行-个人账户中心</a>
+
+                        <div class="nav-collapse collapse navbar-responsive-collapse">
+                            <ul class="nav">
+                                <li>
+                                    <a href="/user/userCenter.do">信息查看</a>
+                                </li>
+                                <li>
+                                    <a href="/user/changesInfo.do">个人信息修改</a>
+                                </li>
+                                <li class="active">
+                                    <a href="/user/operation.do">存取款与转账</a>
+                                </li>
+                            </ul>
+                            <ul class="nav pull-right">
+                                <li>
+                                    <a href="/user/logout.do">退出登录</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row-fluid">
+                <div class=" span12">
+                    <div id="myTabContent" class="tab-content">
+                        <table id="cardInfoTable" class="table table-hover table-bordered .table-striped"
+                               contenteditable="false">
+                            <#list cardList as card>
+                                <tr class="up">
+                                    <td>卡号:${card.getCardNumber()}</td>
+                                    <td class="balance">余额:#{card.getBalance();m2M2} 元</td>
+                                </tr>
+                                <#if card.getActiveFlag()='normal'>
+                                    <tr class="down-canuse">
+                                        <td class="op" colspan="2">
+
+                                            <div class="btn-group">
+                                                <button class="btn btn-success J_deposit"
+                                                        data-cardNumber="${card.getCardNumber()}" data-type="deposit"
+                                                        data-toggle="modal" data-target="#depositOrDeaw">存款
+                                                </button>
+                                                <button class="btn btn-danger J_draw" data-type="draw"
+                                                        data-cardNumber="${card.getCardNumber()}" data-toggle="modal"
+                                                        data-target="#depositOrDeaw">取款
+                                                </button>
+                                                <button class="btn btn-info J_transfer"
+                                                        data-cardNumber="${card.getCardNumber()}" data-type="transfer"
+                                                        data-toggle="modal"
+                                                        data-target="#transfer">
+                                                    转账
+                                                </button>
+                                            </div>
+                                        <span>卡号状态: ${card.getActiveFlag()}
+                                                (可操作)
+                                        </span>
+                                        </td>
+                                    </tr>
+                                    <#else/>
+                                    <tr class="down-cannotuse">
+                                        <td class="op" colspan="2">
+                                            <div class="btn-group">
+                                                <button class="btn btn-success " disabled="disabled">存款</button>
+                                                <button class="btn btn-danger" disabled="disabled">取款</button>
+                                                <button class="btn btn-info " disabled="disabled">转账</button>
+                                            </div>
+                                            <span>卡号状态: ${card.getActiveFlag()}
+                                                (不可操作)
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </#if>
+                            </#list>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
 
-			</div>
-		</div>
-	</div>
+        </div>
+    </div>
+</div>
+</div>
+<div class="modal fade" id="depositOrDeaw" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>你那要对卡号<span id="operationCardnumber" data-cardNumber=""></span>进行<span id="operationType"
+                                                                                          data-type="deposit">存款</span>操作吗?
+                </p>
+                <label for="money">请输入金额</label>
+                <input type="text" id="money" name="money" step="0.01" style="ime-mode:Disabled" maxlength="11"/>
 
+                <div id="J_alert" class="alert alert-danger" style="display: none">
+                    <p>只能输入数字，小数点后只能保留两位</p>
+                </div>
+                <div class="button">
+                    <button type="button" class="cardbtn btn btn-success"
+                            data-dismiss="modal">取消
+                    </button>
+                    <button type="button" id="operation" class="cardbtn btn btn-danger" type="submit"
+                            disabled="disabled">
+                        确定
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<div class="modal fade" id="transfer" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>你那要对卡号<span id="transferCardnumber" data-cardNumber=""></span>进行<span id="transferType"
+                                                                                          data-type="transfer">转账</span>操作吗?
+                </p>
+                <label for="money">请输入金额</label>
+                <input type="text" id="transferMoney" class="no" name="money" step="0.01" style="ime-mode:Disabled" maxlength="11"/>
+                <div id="moneyAlert" class="alert alert-danger" style="display: none">
+                    <p>只能输入数字，小数点后只能保留两位</p>
+                </div>
+                <label for="dstCardNumber">请输入转入的银行卡号</label>
+                <input type="text" id="dstCardNumber" class="no" name="dstCardNumber" style="ime-mode:Disabled"/>
+                <div id="cardNumberAlert" class="alert alert-danger" style="display: none">
+                    <p>只能输入数字</p>
+                </div>
+                <label for="dstName">请输入转入银行卡号持有者的姓名</label>
+                <input type="text" id="dstName" class="no" name="dstName" maxlength="15"/>
+                <div id="nameAlert" class="alert alert-danger" style="display: none">
+                    <p>只能输入中文</p>
+                </div>
+                <div class="button">
+                    <button type="button" class="cardbtn btn btn-success"
+                            data-dismiss="modal">取消
+                    </button>
+                    <button type="button" id="J_transfer" class="cardbtn btn btn-danger" type="submit"
+                            disabled="disabled">
+                        确定
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+<script>
+    function check() {
+        if (!/^\d*(?:\.\d{0,2})?$/.test(this.value)) {
+            $('#J_alert').show(333);
+            this.value = '';
+            $('#operation').prop('disabled', true);
+        }
+        else {
+            $('#operation').prop('disabled', false);
+            $('#J_alert').hide(333);
+        }
+    }
+    $('#money').bind('keyup', check);
+    $('#transferMoney').bind('keyup', check);
+</script>
+<script>
+    function setData() {
+        $('#operationCardnumber').attr('data-cardNumber', $(this).attr('data-cardNumber'));
+        $('#operationCardnumber').text($('#operationCardnumber').attr('data-cardNumber'));
+        $('#operationType').attr('data-type', $(this).attr('data-type'));
+        if ($('#operationType').attr('data-type') == 'deposit') {
+            $('#operationType').text('存款');
+        }
+        else if ($('#operationType').attr('data-type') == 'draw') {
+            $('#operationType').text('取款');
+        }
+    }
+    $('.J_deposit').bind('click', setData);
+    $('.J_draw').bind('click', setData);
+</script>
+<script>
+    $('#operation').click(function () {
+        $.ajax({
+            url: '/user/depositOrDeaw.do',
+            data: {
+                cardNumber: $('#operationCardnumber').attr('data-cardNumber'),
+                operationType: $('#operationType').attr('data-type'),
+                money: $('#money').val()
+            },
+            type: 'get',
+            dataType: "text",
+            success: function (msg) {
+                if (msg == 'success') {
+                    location.reload();
+                } else {
+                    alert(msg + " 请重新尝试！");
+                }
+            }
+        })
+    });
+</script>
 
+<script>
+    function CheckButton() {
+        var input = $('#transfer .modal-body input');
+        var can = true;
+        for (var i = 0; i < input.size(); ++i) {
+            if((input.get(i)).className == 'no'){
+                can = false;
+                break;
+            }
+        }
+        if(can){
+            $('#J_transfer').prop('disabled', false);
+        }
+        else{
+            $('#J_transfer').prop('disabled', true);
+        }
+    }
+    function checkCard() {
+        if (!/^\d+?$/.test(this.value)) {
+            $(this).attr('class','no');
+            $('#cardNumberAlert').show(333);
+            this.value = '';
+        }
+        else {
+            $(this).attr('class','yes');
+            $('#cardNumberAlert').hide(333);
+            CheckButton();
+        }
+    }
+    function checkName() {
+        if (!/^[一-龥]{1,15}$/.test(this.value)) {
+           $(this).attr('class','no');
+            $('#nameAlert').show(333);
+            this.value = '';
+        }
+        else {
+            $(this).attr('class','yes');
+            $('#nameAlert').hide(333);
+            CheckButton();
+        }
+    }
+    function checkMoney() {
+        if (!/^\d*(?:\.\d{0,2})?$/.test(this.value)) {
+            $('#moneyAlert').show(333);
+            this.value = '';
+            $(this).attr('class','no');
 
+        }
+        else {
+            $(this).attr('class','yes');
+            $('#moneyAlert').hide(333);
+            CheckButton();
+        }
+    }
+    $('#dstCardNumber').bind('keyup', checkCard);
+    $('#dstName').bind('keyup', checkName);
+    $('#transferMoney').bind('keyup', checkMoney);
+</script>
+<script>
+    function transferData() {
+        $('#transferCardnumber').attr('data-cardNumber', $(this).attr('data-cardNumber'));
+        $('#transferCardnumber').text($('#transferCardnumber').attr('data-cardNumber'));
+    }
+    $('.J_transfer').bind('click', transferData);
+</script>
+<script>
+    $('#J_transfer').click(function () {
+        $.ajax({
+            url: '/user/transfer.do',
+            data: {
+                cardNumber: $('#transferCardnumber').attr('data-cardNumber'),
+                money: $('#transferMoney').val(),
+                name : $('#dstName').val(),
+                dstCardNumber : $('#dstCardNumber').val()
+            },
+            type: 'get',
+            dataType: "text",
+            success: function (msg) {
+                if (msg == 'success') {
+                    location.reload();
+                } else {
+                    alert(msg + " 请重新尝试！");
+                }
+            }
+        });
+    });
+</script>
+<script>
+
+</script>
 </body>
 </html>

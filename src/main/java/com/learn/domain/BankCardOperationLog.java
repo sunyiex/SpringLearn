@@ -3,6 +3,7 @@ package com.learn.domain;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import java.util.Date;
 
 /**
@@ -14,10 +15,17 @@ public class BankCardOperationLog extends BaseObject{
 //    操作类型
     private String operationType;
 //    操作金额
-    private double operationMoney;
+    private float operationMoney;
 //    操作时间
     private Date time;
-//  被操作的银行卡
+
+    @OneToOne
+    private BankCard dstBankCard;
+    @OneToOne
+    private BankCard srcBankCard;
+
+
+    //  被操作的银行卡
     @ManyToOne
     @JoinColumn(name = "cardId")
     private BankCard bankCard;
@@ -34,7 +42,7 @@ public class BankCardOperationLog extends BaseObject{
         return operationMoney;
     }
 
-    public void setOperationMoney(double operationMoney) {
+    public void setOperationMoney(float operationMoney) {
         this.operationMoney = operationMoney;
     }
 
@@ -53,5 +61,19 @@ public class BankCardOperationLog extends BaseObject{
     public void setBankCard(BankCard bankCard) {
         this.bankCard = bankCard;
     }
+    public BankCard getDstBankCard() {
+        return dstBankCard;
+    }
 
+    public void setDstBankCard(BankCard dstBankCard) {
+        this.dstBankCard = dstBankCard;
+    }
+
+    public BankCard getSrcBankCard() {
+        return srcBankCard;
+    }
+
+    public void setSrcBankCard(BankCard srcBankCard) {
+        this.srcBankCard = srcBankCard;
+    }
 }

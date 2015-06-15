@@ -6,9 +6,9 @@ import com.learn.domain.BankCard;
 import com.learn.repository.BankCardDao;
 import com.learn.repository.LoginInlogDao;
 import com.learn.repository.LoginUserDao;
-import com.learn.service.BankCardService;
 import com.learn.service.LoginUserService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -16,6 +16,8 @@ import javax.annotation.Resource;
  * Created by Yi on 2015/5/24.
  */
 @Service
+// 类中所有public函数都纳入事务管理的标识.
+@Transactional
 public class LoginUserServiceImpl implements LoginUserService {
 
     @Resource
@@ -31,7 +33,6 @@ public class LoginUserServiceImpl implements LoginUserService {
      */
     public LoginUser findByIDCard(String username) {
         return loginUserDao.findByIDCard(username);
-
     }
 
     /**
@@ -46,7 +47,8 @@ public class LoginUserServiceImpl implements LoginUserService {
         }
         return "success";
     }
-    public String addBankCard(LoginUser loginUser, BankCard bankCard){
+
+    public String addBankCard(LoginUser loginUser, BankCard bankCard) {
         loginUser.addCardList(bankCard);
         try {
             bankCardDao.save(bankCard);
@@ -56,7 +58,8 @@ public class LoginUserServiceImpl implements LoginUserService {
         }
         return "success";
     }
-    public String addLoginInlog(LoginUser loginUser, LoginInLog loginInLog){
+
+    public String addLoginInlog(LoginUser loginUser, LoginInLog loginInLog) {
         loginUser.addLoginIglooList(loginInLog);
         try {
             loginInlogDao.save(loginInLog);
@@ -66,7 +69,8 @@ public class LoginUserServiceImpl implements LoginUserService {
         }
         return "success";
     }
-    public String deleteBankCard(LoginUser loginUser,BankCard bankCard) {
+
+    public String deleteBankCard(LoginUser loginUser, BankCard bankCard) {
         loginUser.removeCardList(bankCard);
         try {
             loginUserDao.save(loginUser);
@@ -76,6 +80,30 @@ public class LoginUserServiceImpl implements LoginUserService {
         }
         return "success";
     }
+
+    public String deleteFristLoginInLog(LoginUser loginUser) {
+        LoginInLog loginInLog = loginUser.getLoginIglooList().get(0);
+        loginUser.removeLoginIglooList(loginInLog);
+        try {
+            loginUserDao.save(loginUser);
+            loginInlogDao.delete(loginInLog);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+        return "success";
+    }
+
+    public String deleteLoginInLog(LoginUser loginUser, LoginInLog loginInLog) {
+        loginUser.removeLoginIglooList(loginInLog);
+        try {
+            loginUserDao.save(loginUser);
+            loginInlogDao.delete(loginInLog);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+        return "success";
+    }
+
     public String delete(LoginUser loginUser) {
         try {
             loginUserDao.delete(loginUser);

@@ -13,5 +13,6 @@
     <title>hello</title>
   </head>
   <body>
+  <a href="/user/index.do">用户登录</a>
   </body>
 </html>

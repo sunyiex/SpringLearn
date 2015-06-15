@@ -1,5 +1,6 @@
 package com.learn.common.filter;
 
+import com.learn.common.utils.SessionAndIdCard;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.net.URLEncoder;
 
 /**
  * Created by Yi on 2015/6/7.
@@ -23,7 +25,7 @@ public class SystemFilter  extends OncePerRequestFilter {
     {
         // 不过滤的uri
         String[] notFilter =
-                new String[] { "/user/index.do", "/user/doLogin.do", "/user/register.do", "/user/doRegister.do"};
+                new String[] { "/user/index.do", "/user/doLogin.do", "/user/register.do", "/user/doRegister.do", "/user/result.do"};
 
         // 请求的uri
         String uri = request.getRequestURI();
@@ -38,13 +40,13 @@ public class SystemFilter  extends OncePerRequestFilter {
                 break;
             }
         }
-
         if (doFilter)
         {
             // 执行过滤
             // 从session中获取登录者实体
-            Object obj = request.getSession().getAttribute("userId");
-            if (null == obj)
+            String userId = String.valueOf(request.getSession().getAttribute("userId"));
+            String sessionId = (String) request.getSession().getId();
+            if (null == userId || sessionId ==null || userId.equals("null"))
             {
                 boolean isAjaxRequest = isAjaxRequest(request);
                 if (isAjaxRequest)
@@ -53,13 +55,21 @@ public class SystemFilter  extends OncePerRequestFilter {
                     response.sendError(HttpStatus.UNAUTHORIZED.value(), "您已经太长时间没有操作,请刷新页面");
                     return ;
                 }
-                response.sendRedirect("/user/index.do");
+                String message = "TimeOut";
+                response.sendRedirect("/user/index.do?message=" + message);
                 return;
             }
             else
             {
-                // 如果session中存在登录者实体，则继续
-                filterChain.doFilter(request, response);
+                // 如果session中存在登录者实体，则继续，判断是否飞记录中的session
+
+                if(SessionAndIdCard.isTrue(userId,sessionId)){
+                    filterChain.doFilter(request, response);
+                }
+                else{
+                    String message = "OtherUser";
+                    response.sendRedirect("/user/index.do?message=" + message);
+                }
             }
         }
         else

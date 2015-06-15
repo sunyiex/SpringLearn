@@ -30,12 +30,11 @@
     <!--<property name="prefix" value="/template/"></property>-->
     <!--<property name="suffix" value=".html"></property>-->
     <!--</bean>-->
-
     <!-- 设置freeMarker的配置 -->
     <bean id="freemarkerResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
         <property name="order" value="1"/>
         <property name="suffix" value=".html"/>
-        <property name="contentType" value="text/html;charset=utf-8"/>
+        <property name="contentType" value="text/html;charset=UTF-8"/>
         <property name="viewClass" value="org.springframework.web.servlet.view.freemarker.FreeMarkerView"/>
     </bean>
     <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
@@ -53,7 +52,9 @@
                 <prop key="whitespace_stripping">true</prop>
                 <prop key="tag_syntax">auto_detect</prop>
                 <prop key="url_escaping_charset">UTF-8</prop>
+                <prop key="defaultEncoding">UTF-8</prop>
             </props>
         </property>
     </bean>
+
 </beans>

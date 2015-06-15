@@ -108,6 +108,9 @@ public class LoginUser extends BaseObject {
     public void removeCardList(BankCard card) {
         this.cardList.remove(card);
     }
+    public void removeLoginIglooList(LoginInLog loginInLog) {
+        this.loginIglooList.remove(loginInLog);
+    }
 
     public List<LoginInLog> getLoginIglooList() {
         return loginIglooList;

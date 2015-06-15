@@ -1,0 +1,52 @@
+<#if message!="success">
+    <p>${message}</p>
+<#else/>
+    <#if cardLogList?size == 0>
+        <div class="alert alert-success">该卡号暂时没有操作记录！</div>
+    <#else/>
+        <table class="table table-striped">
+            <caption>${cardNumber} 的操作记录</caption>
+            <thead>
+            <tr>
+                <th>时间</th>
+                <th>操作</th>
+                <th>金额</th>
+                <th>对象</th>
+            </tr>
+            </thead>
+            <tbody>
+            <#list cardLogList?sort_by(["time"])?reverse as log>
+                <#if log.getOperationType()=="deposit" || log.getOperationType()=="draw">
+                <tr>
+                    <td>${log.getTime()?string("yyyy-MM-dd HH:mm:ss")}</td>
+                    <#if log.getOperationType()=="deposit">
+                        <td>存入</td>
+                        <#else />
+                        <td>取出</td>
+                    </#if>
+
+                    <td>${log.getOperationMoney()}元</td>
+                    <td>- - - </td>
+                </tr>
+                    </#if>
+                <#if log.getOperationType()=="transferIn">
+                    <tr>
+                        <td>${log.getTime()?string("yyyy-MM-dd HH:mm:ss")}</td>
+                        <td>转入</td>
+                        <td>${log.getOperationMoney()}元</td>
+                        <td>${log.getSrcBankCard().getCardNumber()} </td>
+                    </tr>
+                </#if>
+                <#if log.getOperationType()=="transferOut">
+                    <tr>
+                        <td>${log.getTime()?string("yyyy-MM-dd HH:mm:ss")}</td>
+                        <td>转出</td>
+                        <td>${log.getOperationMoney()}元</td>
+                        <td>${log.getDstBankCard().getCardNumber()}</td>
+                    </tr>
+                </#if>
+            </#list>
+            </tbody>
+        </table>
+    </#if>
+</#if>

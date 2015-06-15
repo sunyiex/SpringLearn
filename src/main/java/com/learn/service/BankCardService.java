@@ -1,7 +1,6 @@
 package com.learn.service;
 
 import com.learn.domain.BankCard;
-import com.learn.domain.LoginUser;
 import com.learn.repository.BankCardDao;
 
 /**
@@ -11,7 +10,10 @@ public interface BankCardService extends BaseService<BankCard,BankCardDao>{
 
     public BankCard findByCardNumber(String cardNumber);
     public BankCard findLast();
-    public String save(BankCard bankCard);
+    public String  save(BankCard bankCard);
     public String delete(BankCard bankCard);
     public String saveAndFlush(BankCard bankCard);
+    public String depositOrDraw(BankCard bankCard,String operationType, float money);
+    public String transfer(BankCard bankCard, BankCard dstBankCard, float money);
+
 }

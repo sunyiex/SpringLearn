@@ -45,7 +45,7 @@
                     <div class="container-fluid">
                         <a data-target=".navbar-responsive-collapse" data-toggle="collapse" class="btn btn-navbar"><span
                                 class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a>
-                        <a href="./userCenter.html" class="brand">银行-个人账户中心</a>
+                        <a href="/user/userCenter.do" class="brand">银行-个人账户中心</a>
 
                         <div class="nav-collapse collapse navbar-responsive-collapse">
                             <ul class="nav">
@@ -58,9 +58,8 @@
                                 <li>
                                     <a href="/user/operation.do">存取款与转账</a>
                                 </li>
-                                <li>
-                                    <a href="/user/history.do">历史记录查询</a>
-                                </li>
+                            </ul>
+                            <ul class="nav pull-right">
                                 <li>
                                     <a href="/user/logout.do">退出登录</a>
                                 </li>
@@ -148,7 +147,7 @@
                         <form>
                             <div class="modal-body">
                                 <label for="newVal">请输入<span id="newValname">手机号</span></label>
-                                <input type="text" id="newVal" name="newVal">
+                                <input type="text" id="newVal" name="newVal" style="ime-mode:Disabled">
                                 <input type="text" id="newValType" name="type" style="display:none">
                             </div>
                             <div class="alert alert-danger valAlert" style="display: none">请输入正确的格式</div>
@@ -233,7 +232,7 @@
         $('#newValType').val('phone');
         $("#newVal").unbind("keyup blur");
         $("#newVal").bind("keyup blur", function () {
-        inspection(this, phoneRegExp);
+            inspection(this, phoneRegExp);
         });
     }
     function cemail() {

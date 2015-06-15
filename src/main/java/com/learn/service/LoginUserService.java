@@ -17,4 +17,6 @@ public interface LoginUserService extends BaseService<LoginUser,LoginUserDao>{
     public String addBankCard(LoginUser loginUser, BankCard bankCard);
     public String addLoginInlog(LoginUser loginUser, LoginInLog loginInLog);
     public String deleteBankCard(LoginUser loginUser,BankCard bankCard);
+    public String deleteLoginInLog(LoginUser loginUser,LoginInLog loginInLog);
+    public String deleteFristLoginInLog(LoginUser loginUser);
 }

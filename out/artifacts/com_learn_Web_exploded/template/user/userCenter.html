@@ -4,11 +4,23 @@
     <#include "../common/header.html"/>
     <title>Document</title>
     <style>
-        #cardInfo td, #cardInfo th {
+        body {
+            background: rgba(150, 200, 255, 0.1);
+        }
+
+        #cardInfo td {
             text-align: center;
         }
-       #cardInfoTable .balance{
+
+        /*#cardInfo .description{*/
+        /*text-align: center;*/
+        /*}*/
+        #cardInfo .balance {
             text-align: right;
+        }
+
+        #cardLog {
+            min-height: 500px;
         }
     </style>
 </head>
@@ -21,7 +33,7 @@
                     <div class="container-fluid">
                         <a data-target=".navbar-responsive-collapse" data-toggle="collapse" class="btn btn-navbar"><span
                                 class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a>
-                        <a href="./userCenter.html" class="brand">银行-个人账户中心</a>
+                        <a href="/user/userCenter.do" class="brand">银行-个人账户中心</a>
 
                         <div class="nav-collapse collapse navbar-responsive-collapse">
                             <ul class="nav">
@@ -34,9 +46,8 @@
                                 <li>
                                     <a href="/user/operation.do">存取款与转账</a>
                                 </li>
-                                <li>
-                                    <a href="/user/history.do">历史记录查询</a>
-                                </li>
+                            </ul>
+                            <ul class="nav pull-right">
                                 <li>
                                     <a href="/user/logout.do">退出登录</a>
                                 </li>
@@ -52,24 +63,32 @@
                     <div class="tabbable tabs-left" id="tabs-97705">
                         <ul id="myTab" class="nav nav-tabs">
                             <li class="active">
-                                <a href="#userInfo" data-toggle="tab">
-                                    个人信息查看
-                                </a>
+                                <a href="#userInfo" data-toggle="tab">个人信息查看</a>
                             </li>
-                            <li><a href="#cardInfo" data-toggle="tab">我的银行卡</a></li>
+                            <li>
+                                <a href="#cardInfo" data-toggle="tab">我的银行卡</a>
+                            </li>
+                            <li>
+                                <a href="#loginInLog" data-toggle="tab">登陆记录</a>
+                            </li>
+                            <li>
+                                <a href="#cardLog" data-toggle="tab">银行卡记录</a>
+                            </li>
 
                         </ul>
-
                         <div id="myTabContent" class="tab-content">
                             <div class="tab-pane fade in active" id="userInfo">
-                                <table id="userInfotable" class="table table-striped table-hover" contenteditable="false">
+                                <table id="userInfotable" class="table table-striped table-hover"
+                                       contenteditable="false">
                                     <tbody>
-                                    <tr class="">
+                                    <tr>
                                         <td>
                                             <pre>姓名  <span>${user.getName()!""}</span></pre>
                                         </td>
                                         <td>
-                                            <pre>性别  <#if user.getSex()="male"><span>男</span><#else><span>女</span></#if></pre>
+                                            <pre>性别  <#if user.getSex()="male"><span>男</span>
+                                                <#else/>
+                                                <span>女</span></#if></pre>
                                         </td>
                                     </tr>
                                     <tr class="success">
@@ -91,29 +110,73 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="tab-pane fade" id="cardInfo" >
-                                <table id="cardInfoTable" class="table table-hover table-bordered .table-striped" contenteditable="false">
-                                    <thead>
-                                    <tr>
-                                        <th>卡号</th>
-                                        <th>余额</th>
-                                        <th>卡号建卡时间</th>
-                                        <th>状态</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-
+                            <div class="tab-pane fade" id="cardInfo">
+                                <table id="cardInfoTable" class="table table-hover table-bordered .table-striped"
+                                       contenteditable="false">
                                     <#list cardList as card>
-                                    <tr>
-                                        <td>${card.getCardNumber()}</td>
-                                        <td class="balance">#{card.getBalance();m2M2} 元</td>
-                                        <td>${card.getTime()}</td>
-                                        <td>${card.getActiveFlag()}</td>
-                                    </tr>
+                                        <tr class="info">
+                                            <td class="description">卡号</td>
+                                            <td>${card.getCardNumber()}</td>
+                                            <td class="description">余额</td>
+                                            <td class="balance">#{card.getBalance();m2M2} 元</td>
+                                        </tr>
+                                        <tr class="warning">
+                                            <td class="description">创建时间</td>
+                                            <td>${card.getTime()}</td>
+                                            <td class="description">卡号状态</td>
+                                            <td>${card.getActiveFlag()}</td>
+                                        </tr>
                                     </#list>
                                     </tbody>
                                 </table>
                             </div>
+                            <div class="tab-pane fade" id="loginInLog">
+                                <table class="table table-striped .table-bordered .table-hover">
+                                    <caption>用户登陆记录(会显示您最近二十次的登陆IP和时间)</caption>
+                                    <thead>
+                                    <tr>
+                                        <th>IP地址</th>
+                                        <th>登陆时间</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <#if loginInLogList??>
+                                        <#list loginInLogList?sort_by(["time"])?reverse as LoginInlog>
+                                            <tr class="success">
+                                                <td>${LoginInlog.getIp()!""}</td>
+                                                <td>${LoginInlog.getTime()!""?string('yyyy-MM-dd HH:mm:ss')}</td>
+                                            </tr>
+                                        </#list>
+                                        <#else/>
+                                        <tr class="error">
+                                            <td colspan="2">获取失败</td>
+                                        </tr>
+                                    </#if>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="tab-pane fade" id="cardLog">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-primary" id="selectCard">暂无</button>
+                                    <button type="button" class="btn btn-primary dropdown-toggle"
+                                            data-toggle="dropdown">
+                                        <span class="caret"></span>
+                                        <span class="sr-only">银行卡号</span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <#list cardList as card>
+                                            <li><a href="javascript:;"
+                                                   class="selectCardNumber">${card.getCardNumber()}</a></li>
+                                        </#list>
+                                    </ul>
+                                </div>
+                                <div id="selectCardLog">
+
+                                </div>
+
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -139,6 +202,22 @@
                 $('.tabbable').removeClass('tabs-bleow');
             }
         }
+    }
+</script>
+<script>
+    $('.selectCardNumber').bind('click', getCardLog);
+    function getCardLog() {
+        var cardnumber = $(this).text()
+        $.ajax({
+            url: '/user/getCardLog.do',
+            data: {
+                cardNumber: cardnumber
+            },
+            success: function (msg) {
+                $('#selectCard').text(cardnumber);
+                $('#selectCardLog').html(msg);
+            }
+        });
     }
 </script>
 </body>

@@ -15,6 +15,8 @@ public class LoginInLog extends BaseObject{
     private Date time;
 //    登陆IP
     private String ip;
+
+    private  String address;
 //  登陆账户
     @ManyToOne
     @JoinColumn(name = "userId")
@@ -34,6 +36,14 @@ public class LoginInLog extends BaseObject{
 
     public void setIp(String ip) {
         this.ip = ip;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public LoginUser getLoginUser() {

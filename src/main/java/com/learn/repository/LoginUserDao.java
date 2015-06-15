@@ -19,4 +19,6 @@ public interface LoginUserDao extends JpaRepository<LoginUser, Long> {
     @Query(value = "select u from LoginUser u where u.IDCard = ?1")
     LoginUser findByIDCard(String IDCard);
 
+
+
 }
