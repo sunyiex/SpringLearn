@@ -2,9 +2,42 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
+    <title>404错误</title>
+    <style>
+        .alert-danger{
+            margin: -100px;
+            padding: 200px;
+            background-color: lightskyblue;
+        }
+        .alert-danger div{
+            margin: 0 auto;
+        }
+    </style>
 </head>
 <body>
-      <h1>404错误：您访问的页面不存在。</h1>
+<div class="alert alert-danger">
+    <div>
+
+        <h1>404错误：您访问的页面不存在。</h1>
+
+
+        <p id="show">请等待10秒后，自动跳转到会员首页</p>
+        <a href="/user/index.do">点击此处直接跳转</a>
+
+    </div>
+
+</div>
+      <script>
+          var t = 10;//设定跳转的时间
+         var time  = setInterval("refer()", 1000); //启动1秒定时
+          function refer() {
+              t--;
+              if (t == 0) {
+                  location = "/user/index.do"; //设定跳转的链接地址
+                  clearInterval(time);
+              }
+              document.getElementById('show').innerHTML = "请等待" + t + "秒后，自动跳转到会员首页"; //显示倒计时
+          }
+      </script>
 </body>
 </html>

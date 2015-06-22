@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <#include "../common/header.html"/>
+    <title>用户记录查看</title>
+    <style>
+        #userLog {
+            min-height: 640px;
+        }
+
+        label {
+            display: inline-block;
+        }
+
+        input {
+            width: 150px;
+            padding-top: 10px;
+        }
+
+        #name {
+            width: 75px;
+        }
+
+        .select {
+            line-height: 2em;
+            padding: 10px;
+        }
+
+        .btn-group {
+            margin-left: 25px;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="row-fluid">
+            <div class="col-xs-6 span12">
+                <div class="tabbable tabs-left" id="tabs-97705">
+                    <ul class="nav nav-tabs">
+                        <li>
+                            <a href="/admin/adminCenter.do">用户信息查看</a>
+                        </li>
+                        <li>
+                            <a href="/admin/bankCard.do">银行卡查看</a>
+                        </li>
+                        <li>
+                            <a href="/admin/reportLoss.do">挂失操作</a>
+                        </li>
+                        <li class="active">
+                            <a href="/admin/userLog.do">用户记录查看</a>
+                        </li>
+                        <li>
+                            <a href="/admin/bankLog.do">银行卡记录查看</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade in active" id="userLog" IDCard=${RequestParameters["IDCard"]!"-1"}>
+                            <div class="select">
+                                <div>
+                                    <label for="IDCard">输入身份证</label>
+                                    <input type="text" id="IDCard"/>
+                                    <label for="IDCard">输入姓名</label>
+                                    <input type="text" id="name"/>
+                                </div>
+
+
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-primary" id="selectCard">暂无</button>
+                                    <button type="button" class="btn btn-primary dropdown-toggle"
+                                            data-toggle="dropdown">
+                                        <span class="caret"></span>
+                                        <span class="sr-only">身份证 - 姓名</span>
+                                    </button>
+
+                                    <ul class="dropdown-menu" role="menu" id="IDList">
+                                        <#list userList as user>
+                                            <li><a href="javascript:;"
+                                                   class="selectCardNumber" dataID="${user.getIDCard()}"
+                                                   dataName="${user.getName()}"><span>${user.getIDCard()}</span>
+                                                - <span>${user.getName()}</span></a>
+                                            </li>
+                                        </#list>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div id="log">
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<script>
+    settab();
+    window.onresize = settab;
+    //浏览器当前窗口文档body的高度
+    function settab() {
+        if ($(document.body).width() < 500) {
+            if ($('.tabbable').hasClass('tabs-left')) {
+                $('.tabbable').addClass('tabs-bleow');
+                $('.tabbable').removeClass('tabs-left');
+            }
+        }
+        else {
+            if ($('.tabbable').hasClass('tabs-bleow')) {
+                $('.tabbable').addClass('tabs-left');
+                $('.tabbable').removeClass('tabs-bleow');
+            }
+        }
+    }
+</script>
+<script>
+
+    $('.selectCardNumber').bind('click', getCardLog);
+    function getCardLog() {
+        var text = $(this).text()
+        var IDCard = $(this).attr('dataID');
+        $.ajax({
+            url: '/admin/getUserlog.do',
+            data: {
+                IDCard: IDCard
+            },
+            success: function (msg) {
+                $('#selectCard').text(text);
+                $('#log').html(msg);
+            }
+        });
+    }
+
+</script>
+
+<script>
+    $('.dropdown-toggle').bind('click', check);
+
+    function check() {
+        var IDCard = $('#IDCard').val();
+        var name = $('#name').val();
+        var lista = $('#IDList li a');
+        for (var i = 0; i < lista.length; ++i) {
+            var aIdCard = $(lista.get(i)).attr('dataID');
+            var aName = $(lista.get(i)).attr('dataName');
+            if (aIdCard.indexOf(IDCard) == -1) {
+                $($(lista.get(i)).parent()).hide();
+            }
+            else if (aName.indexOf(name) == -1) {
+                $($(lista.get(i)).parent()).hide();
+            }
+            else {
+                $($(lista.get(i)).parent()).show();
+            }
+        }
+    }
+</script>
+
+<script>
+    function init() {
+        var initId = $('#userLog').attr('IDCard');
+        if (initId != "-1") {
+            var list = $('#IDList li a');
+            for (var i = 0; i < list.length; ++i) {
+                if($(list.get(i)).attr('dataID') == initId){
+                    $(list.get(i)).trigger('click');
+                }
+            }
+        }
+    }
+    init();
+</script>
+</body>
+</html>

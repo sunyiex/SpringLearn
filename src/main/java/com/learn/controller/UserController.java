@@ -1,13 +1,11 @@
 package com.learn.controller;
 
-import com.learn.common.utils.IP;
-import com.learn.common.utils.SessionAndIdCard;
+import com.learn.common.utils.*;
 import com.learn.domain.LoginInLog;
 import com.learn.domain.LoginUser;
 import com.learn.domain.BankCard;
 import com.learn.service.BankCardService;
 import com.learn.service.LoginUserService;
-import com.learn.common.utils.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +28,8 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "/user")
 public class UserController {
+    protected static final long SENDEMAILTIMEOUT = 30000;
+    protected static final long EMAILTIME = 86400000;//24小时
 
     @Autowired
     private LoginUserService loginUserService;
@@ -50,12 +50,12 @@ public class UserController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/login.do", method = RequestMethod.GET)
-    public ModelAndView login(ModelAndView modelAndView) {
-        modelAndView.addObject("test", "sunmasd");
-        modelAndView.setViewName("/user/login");
-        return modelAndView;
-    }
+//    @RequestMapping(value = "/login.do", method = RequestMethod.GET)
+//    public ModelAndView login(ModelAndView modelAndView) {
+//        modelAndView.addObject("test", "sunmasd");
+//        modelAndView.setViewName("/user/login");
+//        return modelAndView;
+//    }
 
     @RequestMapping(value = "/doLogin.do", method = RequestMethod.POST)
     @ResponseBody
@@ -88,7 +88,7 @@ public class UserController {
                 if (loginUser.getType() == null || loginUser.getType().equals("admin")) {
                     //管理员
                     modelAndView.addObject("message", msg);
-                    modelAndView.setViewName("redirect:/user/adminCenter.do");
+                    modelAndView.setViewName("redirect:/admin/index.do");
                 } else {
                     //普通用户
                     LoginInLog loginInLog = new LoginInLog();
@@ -112,12 +112,12 @@ public class UserController {
                     }
                 }
             } else {
-                msg = "password error";
+                msg = "密码错误";
                 modelAndView.addObject("message", msg);
                 modelAndView.setViewName("redirect:/user/result.do");
             }
         } else {
-            msg = "could not find this member";
+            msg = "该会员不存在";
             modelAndView.addObject("message", msg);
             modelAndView.setViewName("redirect:/user/result.do");
         }
@@ -165,11 +165,26 @@ public class UserController {
         String sex = request.getParameter("sex");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date birthday = sdf.parse(birthdaystr);
-
+        LoginUser checkUser = new LoginUser();
+        checkUser.setPassword(password);
+        checkUser.setEmail(email);
+        checkUser.setIDCard(IDCard);
+        checkUser.setName(name);
+        checkUser.setPhone(phone);
+        checkUser.setSex(sex);
+        //用户信息检查
+        String checkMsg = loginUserService.checkUser(checkUser, birthdaystr);
+        if (!checkMsg.equals("success")) {
+            modelAndView.addObject("message", checkMsg + "错误");
+            modelAndView.setViewName("redirect:/user/result.do");
+            return modelAndView;
+        }
+        //判断用户是否注册
         LoginUser user = loginUserService.findByIDCard(IDCard);
         if (user != null) {
             modelAndView.addObject("message", "会员已经被注册过了");
             modelAndView.setViewName("redirect:/user/result.do");
+            return modelAndView;
         }
         password = MD5Util.MD5(password);
         LoginUser loginUser = new LoginUser();
@@ -219,7 +234,7 @@ public class UserController {
      */
     @RequestMapping(value = "/index.do", method = RequestMethod.GET)
     public ModelAndView index(ModelAndView modelAndView) {
-        modelAndView.addObject("test", "sunmasd");
+//        modelAndView.addObject("test", "sunmasd");
         modelAndView.setViewName("/user/index");
         return modelAndView;
     }
@@ -343,7 +358,9 @@ public class UserController {
         }
         BankCard lastCard = bankCardService.findLast();
         BankCard newCard = new BankCard();
-        newCard.setCardNumber(String.valueOf(Long.parseLong(lastCard.getCardNumber()) + 1));
+        String num = lastCard.getCardNumber();
+        num = CardUtil.getNextCardNumber(num);
+        newCard.setCardNumber(num);
         newCard.setTime(new Date());
         newCard.setBalance(0);
         newCard.setActiveFlag("normal");
@@ -495,6 +512,7 @@ public class UserController {
 
     /**
      * 转账
+     *
      * @param request
      * @param modelAndView
      * @param session
@@ -548,6 +566,7 @@ public class UserController {
             modelAndView.setViewName("/user/result");
         }
         String cardNumber = request.getParameter("cardNumber");
+        System.out.printf("%s",cardNumber);
         BankCard bankCard = bankCardService.findByCardNumber(cardNumber);
         if (bankCard.getOperationList() == null || loginUser.getCardList().indexOf(bankCard) == -1) {
             modelAndView.addObject("message", "错误的银行卡号");
@@ -561,6 +580,7 @@ public class UserController {
         modelAndView.setViewName("/user/CardLog");
         return modelAndView;
     }
+
     /**
      * 登出
      *
@@ -572,11 +592,183 @@ public class UserController {
     public ModelAndView logout(ModelAndView modelAndView, HttpSession session) {
         String userId = String.valueOf((Long) session.getAttribute("userId"));
         SessionAndIdCard.removeUser(userId, session.getId());
-        System.out.printf("%s", userId);
         session.removeAttribute("userId");
         session.removeAttribute("userIDCard");
         modelAndView.setViewName("redirect:/user/index.do");
         return modelAndView;
     }
+
+    /**
+     * 忘记密码页面跳转2015年6月17日19:27:03
+     *
+     * @param request
+     * @param modelAndView
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/forgetPassword.do", method = RequestMethod.GET)
+    public ModelAndView forget(HttpServletRequest request, ModelAndView modelAndView, HttpSession session) {
+//        String userId = String.valueOf((Long) session.getAttribute("userId"));
+//        SessionAndIdCard.removeUser(userId, session.getId());
+
+        modelAndView.setViewName("/user/forgetPassword");
+        return modelAndView;
+    }
+
+    /**
+     * 邮箱发送
+     *
+     * @param modelAndView
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/sendEmail.do", method = RequestMethod.POST)
+    public ModelAndView sendEmail(HttpServletRequest request, ModelAndView modelAndView, HttpSession session) {
+//        String userId = String.valueOf((Long) session.getAttribute("userId"));
+//        SessionAndIdCard.removeUser(userId, session.getId());
+        String kaptchaCode = (String) session.getAttribute(com.google.code.kaptcha.Constants.KAPTCHA_SESSION_KEY);
+        String captcha = request.getParameter("kaptcha");
+        if (!captcha.equals(kaptchaCode)) {
+            modelAndView.addObject("message", "验证码错误");
+            modelAndView.setViewName("/user/result");
+            return modelAndView;
+        }
+        String IDCard = request.getParameter("IDCard");
+        String email = request.getParameter("email");
+
+        LoginUser loginUser = loginUserService.findByIDCard(IDCard);
+        if (loginUser == null) {
+            modelAndView.addObject("message", "用户名不存在");
+            modelAndView.setViewName("/user/result");
+            return modelAndView;
+        } else if (!loginUser.getEmail().equals(email)) {
+            modelAndView.addObject("message", "邮箱错误");
+            modelAndView.setViewName("/user/result");
+            return modelAndView;
+        }
+        if (session.getAttribute("emailStartTime") == null) {
+            session.setAttribute("emailStartTime", System.currentTimeMillis());
+        } else {
+            if (!checkEmailTimeOut(System.currentTimeMillis(), (Long) session.getAttribute("emailStartTime"))) {
+                modelAndView.addObject("message", "邮件已经发送过,注意查收！(30秒内不能连续发送)");
+                modelAndView.setViewName("/user/result");
+                return modelAndView;
+            } else {
+                session.setAttribute("emailStartTime", System.currentTimeMillis());
+            }
+        }
+        String URL = request.getRequestURL().toString().replaceAll(request.getRequestURI().toString(), "");
+        String msg = loginUserService.sendEmail(email, IDCard, loginUser.getId(), URL);
+        if (msg.equals("success")) {
+            modelAndView.addObject("message", "发送成功");
+        } else {
+            modelAndView.addObject("message", "发送失败，请稍后在尝试。");
+        }
+        modelAndView.setViewName("/user/result");
+        return modelAndView;
+    }
+
+    /**
+     * 进入新密码设置页面2015年6月17日19:26:43
+     *
+     * @param request
+     * @param modelAndView
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/setNewPassword.do", method = RequestMethod.GET)
+    public ModelAndView setNewPassword(HttpServletRequest request, ModelAndView modelAndView, HttpSession session) {
+//        String userId = String.valueOf((Long) session.getAttribute("userId"));
+//        SessionAndIdCard.removeUser(userId, session.getId());
+        String time = request.getParameter("time");
+        String id = request.getParameter("id");
+        String IDCard = request.getParameter("IDCard");
+        modelAndView.setViewName("/user/result");
+        if (id == null || time == null || IDCard == null) {
+            modelAndView.addObject("message", "请不要篡改网址！");
+            return modelAndView;
+        }
+        id = DigestUtil.Decrypt(id);
+        time = DigestUtil.Decrypt(time);
+        IDCard = DigestUtil.Decrypt(IDCard);
+        LoginUser loginUser = loginUserService.findByIDCard(IDCard);
+        if (!String.valueOf(loginUser.getId()).equals(id)) {
+            modelAndView.addObject("message", "数据出错，可能网址有问题！");
+            return modelAndView;
+        }
+        long now = System.currentTimeMillis();
+        long send = Long.parseLong(time);
+        if (now - send > EMAILTIME) {
+            modelAndView.addObject("message", "这个网址过时了，请重新发送邮件获得网址。");
+            return modelAndView;
+        }
+        session.setAttribute("newPasswordIDCard", IDCard);
+        modelAndView.setViewName("/user/setNewPassword");
+        return modelAndView;
+    }
+
+    /**
+     * 设置新密码操作
+     *
+     * @param request
+     * @param modelAndView
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/doSetNewPassword.do", method = RequestMethod.POST)
+    public ModelAndView doSetNewPassword(HttpServletRequest request, ModelAndView modelAndView, HttpSession session) {
+//        String userId = String.valueOf((Long) session.getAttribute("userId"));
+//        SessionAndIdCard.removeUser(userId, session.getId());
+        String kaptchaCode = (String) session.getAttribute(com.google.code.kaptcha.Constants.KAPTCHA_SESSION_KEY);
+        String captcha = request.getParameter("kaptcha");
+        modelAndView.setViewName("/user/result");
+        if (!captcha.equals(kaptchaCode)) {
+            modelAndView.addObject("message", "验证码错误");
+            return modelAndView;
+        }
+        String IDCard = (String) session.getAttribute("newPasswordIDCard");
+        LoginUser loginUser = loginUserService.findByIDCard(IDCard);
+        if (loginUser == null) {
+            session.removeAttribute("newPasswordIDCard");
+            modelAndView.addObject("message", "数据出错，请重新发送邮箱设置密码");
+            return modelAndView;
+        }
+        String psd = request.getParameter("password");
+        String psd2 = request.getParameter("password2");
+        if(psd == null){
+            modelAndView.addObject("message", "密码为空");
+            return modelAndView;
+        }
+        if(psd2 == null || !psd.equals(psd2)){
+            modelAndView.addObject("message", "两次密码不同");
+            return modelAndView;
+        }
+
+        loginUser.setPassword(psd);
+        String msg  = loginUserService.checkUser(loginUser);
+        loginUser.setPassword(MD5Util.MD5(psd));
+        if(!msg.equals("success")){
+            modelAndView.addObject("message",msg + "格式不对");
+            return modelAndView;
+
+        }
+        msg = loginUserService.save(loginUser);
+        modelAndView.addObject("message",msg);
+        session.removeAttribute("newPasswordIDCard");
+        return modelAndView;
+    }
+
+
+    /**
+     * 发送邮件时间检查
+     *
+     * @param now
+     * @param end
+     * @return
+     */
+    private boolean checkEmailTimeOut(long now, long end) {
+        return (now - end) > SENDEMAILTIMEOUT;
+    }
+
 }
 

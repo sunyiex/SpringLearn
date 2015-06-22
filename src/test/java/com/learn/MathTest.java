@@ -7,6 +7,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Created by Yi on 2015/5/23.
  */
@@ -53,6 +56,28 @@ public class MathTest {
         loginUser.removeCardList(bankCard3);
         loginUser.removeCardList(bankCard2);
 
+    }
+    private boolean check(String val, String exp){
+        Pattern pattern;
+        Matcher matcher;
+        pattern = Pattern.compile(exp);
+        matcher = pattern.matcher(val);
+        return matcher.find();
+    }
+    @Test
+    public void checkUser(){
+        boolean canUse = true;
+
+        String nameRegExp = "^[\\x{4e00}-\\x{9fa5}]{1,15}$";
+        String IDCardRegExp = "^[0-9]{17,17}[0-9|X|x]{1,1}$";
+        String phoneRegExp =  "^[0-9]{11,11}$";
+        String emailRegRxp =  "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$";
+        String birthdayRegExp =  "((^((1[8-9]\\d{2})|([2-9]\\d{3}))([-\\/\\._])(10|12|0?[13578])([-\\/\\._])(3[01]|[12][0-9]|0?[1-9])$)|(^((1[8-9]\\d{2})|([2-9]\\d{3}))([-\\/\\._])(11|0?[469])([-\\/\\._])(30|[12][0-9]|0?[1-9])$)|(^((1[8-9]\\d{2})|([2-9]\\d{3}))([-\\/\\._])(0?2)([-\\/\\._])(2[0-8]|1[0-9]|0?[1-9])$)|(^([2468][048]00)([-\\/\\._])(0?2)([-\\/\\._])(29)$)|(^([3579][26]00)([-\\/\\._])(0?2)([-\\/\\._])(29)$)|(^([1][89][0][48])([-\\/\\._])(0?2)([-\\/\\._])(29)$)|(^([2-9][0-9][0][48])([-\\/\\._])(0?2)([-\\/\\._])(29)$)|(^([1][89][2468][048])([-\\/\\._])(0?2)([-\\/\\._])(29)$)|(^([2-9][0-9][2468][048])([-\\/\\._])(0?2)([-\\/\\._])(29)$)|(^([1][89][13579][26])([-\\/\\._])(0?2)([-\\/\\._])(29)$)|(^([2-9][0-9][13579][26])([-\\/\\._])(0?2)([-\\/\\._])(29)$))";
+        String passwordRegExp =  "^[^ˇ|^～]{6,16}$";
+        String sexRegExp =  "^(male|female)$";
+
+        org.springframework.util.Assert.isTrue(check("male|female", sexRegExp));
+//
     }
 
 

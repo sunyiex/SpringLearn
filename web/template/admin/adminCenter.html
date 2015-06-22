@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <#include "../common/header.html"/>
+    <title></title>
+    <style>
+        .userInfo .userInfoLi {
+            background-color: skyblue;
+            border-bottom: 1px solid #0f0f0f;
+            border-top: 1px solid #31708f;
+            margin: 0;
+        }
+        .userInfo .userInfoLi:hover{
+            background-color: lightcyan;
+        }
+        .userInfo li{
+            margin: 0;
+            padding: 5px 0 5px 25px;
+            font-size: 1.2em;
+            background-color: lightskyblue;
+            list-style: none;
+            border-bottom: 1px solid #66ccff;
+        }
+        .userInfo li:hover {
+            background-color: lightblue;
+        }
+
+        .btn{
+            margin-left: 50px;
+        }
+        .name{
+            width: 200px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row-fluid">
+
+        <div class="row-fluid">
+            <div class="col-xs-6 span12">
+                <div class="tabbable tabs-left">
+                    <ul  class="nav nav-tabs">
+                        <li class="active">
+                            <a href="/admin/adminCenter.do">用户信息查看</a>
+                        </li>
+                        <li>
+                            <a href="/admin/bankCard.do">银行卡查看</a>
+                        </li>
+                        <li>
+                            <a href="/admin/reportLoss.do">挂失操作</a>
+                        </li>
+                        <li>
+                            <a href="/admin/userLog.do">用户记录查看</a>
+                        </li>
+                        <li>
+                            <a href="/admin/bankLog.do">银行卡记录查看</a>
+                        </li>
+                    </ul>
+                    <div id="myTabContent" class="tab-content">
+                        <div class="tab-pane fade in active" id="userInfo">
+                            <#list page.getContent() as user>
+                                <ul class="userInfo">
+                                    <li class="userInfoLi">
+                                        <p><span>${user_index+1} ：</span><span class="name">姓名：&nbsp;&nbsp;${user.getName()!""}</span>&nbsp;&nbsp;&nbsp;
+                                        性别：&nbsp;&nbsp;
+                                        <#if user.getSex()="male"><span>男</span>
+                                            <#else/>
+                                            <span>女</span></#if>
+                                            <button class="btn btn-info"> 点击查看详情 </button>
+                                            <a href="/admin/userLog.do?IDCard=${user.getIDCard()}" class="btn btn-success">点击查看登陆记录</a>
+                                        </p>
+                                    </li>
+                                    <li style="display: none"><p>身份证号：${user.getIDCard()!""}</p></li>
+                                    <li style="display: none"><p>出生年月：${user.getBirthday()?string('yyyy年MM月dd日')}</p></li>
+                                    <li style="display: none"><p>手机号码：${user.getPhone()!""}</p></li>
+                                    <li style="display: none"><p>email：${user.getEmail()!""}</p></li>
+                                </ul>
+                            </#list>
+                            <#include "../common/page.html"/>
+                            <@pagination page! />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<script>
+    settab();
+    window.onresize = settab;
+    //浏览器当前窗口文档body的高度
+    function settab() {
+        if ($(document.body).width() < 500) {
+            if ($('.tabbable').hasClass('tabs-left')) {
+                $('.tabbable').addClass('tabs-bleow');
+                $('.tabbable').removeClass('tabs-left');
+            }
+        }
+        else {
+            if ($('.tabbable').hasClass('tabs-bleow')) {
+                $('.tabbable').addClass('tabs-left');
+                $('.tabbable').removeClass('tabs-bleow');
+            }
+        }
+    }
+</script>
+<script>
+    $('.selectCardNumber').bind('click', getCardLog);
+    function getCardLog() {
+        var cardnumber = $(this).text()
+        $.ajax({
+            url: '/user/getCardLog.do',
+            data: {
+                cardNumber: cardnumber
+            },
+            success: function (msg) {
+                $('#selectCard').text(cardnumber);
+                $('#selectCardLog').html(msg);
+            }
+        });
+    }
+</script>
+
+<script>
+    $('.userInfoLi').click(function () {
+        var show = $($(this).next());
+        for (var i = 0; i < 4; ++i) {
+            show.toggle(250);
+            show = $(show.next());
+        }
+    });
+</script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head lang="en">
     <#include "../common/header.html"/>
 
-    <title>Document</title>
+    <title>注册用户</title>
     <style>
         body {
             background: rgba(102, 204, 255, 0.2);
@@ -131,7 +131,7 @@
                     <div class="controls">
                         <input id="email" type="text" name="email"/>
 
-                        <div class="alert alert-danger" style="display: none">电子邮箱格式</div>
+                        <div class="alert alert-danger" style="display: none">请输入正确的电子邮箱格式</div>
 
                     </div>
                 </div>
@@ -161,7 +161,7 @@
                         <input id="kaptcha" type="text" name="kaptcha"   maxlength="4"/>
                         <a href="javascript:;" onclick="changeCode()" class="changeCode">
                             <img src="" id="kaptchaImage" style="margin-bottom: -3px"/>
-                            <em class="glyphicon glyphicon-repeat"></em>
+                            <em class="glyphicon glyphicon-repeat" style="display: none"></em>
                         </a>
                     </div>
 
@@ -170,8 +170,9 @@
                     <div class="controls">
                         <button type="submit" class="btn btn-success" id="J_register" disabled="disabled">注册</button>
                         <a href="/user/index.do">
-                            <button class="btn">取消</button>
+                            <div class="btn">取消</div>
                         </a>
+                        <p class="alert alert-info">如果无法点击的话请尝试把您的数据都重新点击一下，都通过测试并变成绿色试一试。</p>
                     </div>
                 </div>
             </form>
@@ -295,10 +296,14 @@
 </script>
 <script>
     function changeCode() {
+        $('#kaptchaImage').hide(123);
         $('#kaptchaImage').attr('src', '/code/captcha-image.do?t=' + Math.floor(Math.random() * 100));
+        $('#kaptchaImage').show(123);
+
     }
     $('#kaptcha').bind('focus', function () {
         changeCode();
+        $('.glyphicon-repeat').show(500);
         $('#kaptcha').unbind('focus');
     });
 </script>

@@ -36,30 +36,30 @@ public class IP {
         return ip;
     }
 
-    public static String getAddressByIP(String strIP)
-    {
-        try
-        {
-            URL url = new URL( "http://ip.qq.com/cgi-bin/searchip?searchip1=" + strIP);
-            URLConnection conn = url.openConnection();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-            String line = null;
-            StringBuffer result = new StringBuffer();
-            while((line = reader.readLine()) != null)
-            {
-                result.append(line);
-            }
-            reader.close();
-            strIP = result.substring(result.indexOf( "该IP所在地为" ));
-            strIP = strIP.substring(strIP.indexOf( "省") + 1);
-            String province = strIP.substring(6, strIP.indexOf("市"));
-            String city = strIP.substring(strIP.indexOf("市") + 1, strIP.indexOf("��"));
-            return province+" "+city;
-        }
-        catch( IOException e)
-        {
-            return "获取失败";
-        }
-
-    }
+//    public static String getAddressByIP(String strIP)
+//    {
+//        try
+//        {
+//            URL url = new URL( "http://ip.qq.com/cgi-bin/searchip?searchip1=" + strIP);
+//            URLConnection conn = url.openConnection();
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+//            String line = null;
+//            StringBuffer result = new StringBuffer();
+//            while((line = reader.readLine()) != null)
+//            {
+//                result.append(line);
+//            }
+//            reader.close();
+//            strIP = result.substring(result.indexOf( "该IP所在地为" ));
+//            strIP = strIP.substring(strIP.indexOf( "省") + 1);
+//            String province = strIP.substring(6, strIP.indexOf("市"));
+//            String city = strIP.substring(strIP.indexOf("市") + 1, strIP.indexOf("��"));
+//            return province+" "+city;
+//        }
+//        catch( IOException e)
+//        {
+//            return "获取失败";
+//        }
+//
+//    }
 }

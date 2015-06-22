@@ -1,5 +1,6 @@
 package com.learn.common.filter;
 
+import com.learn.common.utils.PropertyUtil;
 import com.learn.common.utils.SessionAndIdCard;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -24,8 +25,8 @@ public class SystemFilter  extends OncePerRequestFilter {
             throws ServletException, IOException
     {
         // 不过滤的uri
-        String[] notFilter =
-                new String[] { "/user/index.do", "/user/doLogin.do", "/user/register.do", "/user/doRegister.do", "/user/result.do"};
+        String url =  PropertyUtil.getFilterURL("UserURL");
+        String[] notFilter = url.split(",");
 
         // 请求的uri
         String uri = request.getRequestURI();
@@ -33,7 +34,7 @@ public class SystemFilter  extends OncePerRequestFilter {
         boolean doFilter = true;
         for (String s : notFilter)
         {
-            if (uri.indexOf(s) != -1)
+            if (uri.indexOf(s.trim()) != -1)
             {
                 // 如果uri中包含不过滤的uri，则不进行过滤
                 doFilter = false;

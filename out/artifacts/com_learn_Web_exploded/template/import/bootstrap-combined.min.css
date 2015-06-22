@@ -6692,7 +6692,7 @@ button.close {
     padding-right: 10px;
 }
 }
-@media (min-width:980px) 
+@media (min-width:980px)
 {
     .nav-collapse.collapse {
     height: auto !important;
@@ -7410,7 +7410,7 @@ button.close {
   list-style: none;
   overflow: hidden;
 }
-    
+
 .glyphicons li {
   float: left;
   width: 12.5%;

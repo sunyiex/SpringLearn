@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <#include "../common/header.html"/>
-    <title>Document</title>
+    <title>银行卡操作</title>
     <style>
         body {
             background: silver;
@@ -103,7 +103,7 @@
                                contenteditable="false">
                             <#list cardList as card>
                                 <tr class="up">
-                                    <td>卡号:${card.getCardNumber()}</td>
+                                    <td>${card_index+1} - 卡号:${card.getCardNumber()}</td>
                                     <td class="balance">余额:#{card.getBalance();m2M2} 元</td>
                                 </tr>
                                 <#if card.getActiveFlag()='normal'>
@@ -126,7 +126,7 @@
                                                     转账
                                                 </button>
                                             </div>
-                                        <span>卡号状态: ${card.getActiveFlag()}
+                                        <span>卡号状态: 正常
                                                 (可操作)
                                         </span>
                                         </td>
@@ -139,7 +139,7 @@
                                                 <button class="btn btn-danger" disabled="disabled">取款</button>
                                                 <button class="btn btn-info " disabled="disabled">转账</button>
                                             </div>
-                                            <span>卡号状态: ${card.getActiveFlag()}
+                                            <span>卡号状态: 已挂失
                                                 (不可操作)
                                             </span>
                                         </td>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <#include "../common/header.html"/>
+    <title>返回结果</title>
+    <style>
+        .alert-success{
+            padding: 100px;
+        }
+        .alert-success div{
+            margin: 20px auto;
+            width: 500px;
+        }
+        .alert-success h3{
+            margin: 0 auto;
+            width: 500px;
+        }
+    </style>
+</head>
+<body>
+<div class="alert alert-success">
+    <#if message="success" >
+        <h3> 操作提示： 操作成功</h3>
+
+        <#else />
+        <h3> 操作提示： ${message!""}</h3>
+
+    </#if>
+    <div >
+        <p id="show">请等待5秒后，自动跳转到会员首页</p>
+        <a href="/admin/index.do">点击此处直接跳转</a>
+    </div>
+</div>
+<script>
+
+    var t = 5;//设定跳转的时间
+   var time =  setInterval("refer()", 1000); //启动1秒定时
+    function refer() {
+        t--;
+        if (t == 0) {
+            location = "/admin/index.do"; //设定跳转的链接地址
+            clearInterval(time);
+        }
+        document.getElementById('show').innerHTML = "请等待" + t + "秒后，自动跳转到会员首页"; //显示倒计时
+    }
+</script>
+</body>
+</html>

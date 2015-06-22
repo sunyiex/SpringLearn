@@ -1,12 +1,9 @@
 package com.learn.domain;
 
-import jdk.internal.org.objectweb.asm.tree.analysis.Value;
-
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.util.Date;
-import java.util.Vector;
 
 /**
  * Created by Yi on 2015/6/3.

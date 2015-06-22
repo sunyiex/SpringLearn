@@ -1,21 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="Encoding">
-    <file url="file://$PROJECT_DIR$/src/main/java/com/learn/Math.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/learn/common/filter/EncodingFilter.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/learn/common/utils/IP.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/learn/common/utils/SessionAndIdCard.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/learn/controller/CaptchaController.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/learn/domain/BaseObject.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/learn/repository/BankCardDao.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/learn/repository/BankCardOperationLogDao.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/learn/repository/LoginInlogDao.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/learn/repository/LoginUserDao.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/learn/service/BankCardService.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/learn/service/BaseService.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/learn/service/impl/BankCardServiceImpl.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/com/learn/service/impl/LoginUserServiceImpl.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/test/java/com/learn/repository/LoginUserDaoTest.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/web/template/import/bootstrap.min.js" charset="GBK" />
+  <component name="Encoding" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

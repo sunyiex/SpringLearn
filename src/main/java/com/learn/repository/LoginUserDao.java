@@ -11,14 +11,10 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface LoginUserDao extends JpaRepository<LoginUser, Long> {
-
     /**
      * @param IDCard
      * @return
      */
     @Query(value = "select u from LoginUser u where u.IDCard = ?1")
     LoginUser findByIDCard(String IDCard);
-
-
-
 }

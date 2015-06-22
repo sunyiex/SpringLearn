@@ -5,6 +5,8 @@ import com.learn.domain.BankCardOperationLog;
 import com.learn.repository.BankCardDao;
 import com.learn.repository.BankCardOperationLogDao;
 import com.learn.service.BankCardService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,7 +79,12 @@ public class BankCardServiceImpl implements BankCardService {
         }
         return "success";
     }
-
+    public List<BankCard> findAll(){
+        return bankCardDao.findAll();
+    }
+    public Page<BankCard> findAll(PageRequest pageRequest){
+        return bankCardDao.findAll(pageRequest);
+    }
     public String delete(BankCard bankCard) {
         try {
             bankCardDao.delete(bankCard);
