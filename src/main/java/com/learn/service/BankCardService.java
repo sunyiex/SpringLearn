@@ -1,6 +1,7 @@
 package com.learn.service;
 
 import com.learn.domain.BankCard;
+import com.learn.domain.BankCardOperationLog;
 import com.learn.repository.BankCardDao;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +20,9 @@ public interface BankCardService extends BaseService<BankCard,BankCardDao>{
     public String saveAndFlush(BankCard bankCard);
     public String depositOrDraw(BankCard bankCard,String operationType, float money);
     public String transfer(BankCard bankCard, BankCard dstBankCard, float money);
+    public String addOperationLog(BankCard bankCard,BankCardOperationLog bankCardOperationLog);
     public List<BankCard> findAll();
     public Page<BankCard> findAll(PageRequest pageRequest);
+    public Page<BankCard> getByActiveFlag(String activeFlag,PageRequest pageRequest);
+
 }

@@ -124,11 +124,17 @@
                                             <td class="description">创建时间</td>
                                             <td>${card.getTime()}</td>
                                             <td class="description">卡号状态</td>
-                                            <#if card.getActiveFlag() = "normal">
-                                                <td>正常</td>
-                                                <#else />
-                                                <td>已挂失</td>
-                                            </#if>
+                                            <td>
+                                                <#if card.getActiveFlag() = "normal">
+                                                    正常
+                                                    <#elseif card.getActiveFlag() = "reportLoss" />
+                                                    挂失审核中
+                                                    <#elseif card.getActiveFlag() = "loss" />
+                                                    已挂失
+                                                    <#elseif card.getActiveFlag() = "find" />
+                                                    找回审核中
+                                                </#if>
+                                            </td>
                                         </tr>
                                     </#list>
                                     </tbody>

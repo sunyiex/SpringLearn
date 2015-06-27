@@ -14,6 +14,9 @@
         .userInfo .userInfoLi:hover{
             background-color: lightcyan;
         }
+        .tabs-bleow .userInfo{
+            margin-left: -10px;
+        }
         .userInfo li{
             margin: 0;
             padding: 5px 0 5px 25px;
@@ -22,41 +25,35 @@
             list-style: none;
             border-bottom: 1px solid #66ccff;
         }
-        .tabs-bleow .userInfo{
-            margin-left: -10px;
-        }
         .userInfo li:hover {
             background-color: lightblue;
         }
         .btn{
             margin-top: 10px;
-            margin-left: 10px;
         }
         .name{
             min-width: 100px;
             display: inline-block;
-
         }
     </style>
 </head>
 <body>
 <div class="container-fluid">
     <div class="row-fluid">
-
         <div class="row-fluid">
             <div class="col-xs-6 span12">
                 <div class="tabbable tabs-left">
                     <ul  class="nav nav-tabs">
-                        <li >
+                        <li>
                             <a href="/admin/adminCenter.do">用户信息查看</a>
                         </li>
-                        <li class="active">
+                        <li>
                             <a href="/admin/bankCard.do">银行卡查看</a>
                         </li>
-                        <li>
+                        <li  >
                             <a href="/admin/reportLoss.do">挂失操作</a>
                         </li>
-                        <li >
+                        <li class="active">
                             <a href="/admin/find.do">找回操作</a>
                         </li>
                         <li>
@@ -74,9 +71,9 @@
                             <#list page.getContent() as card>
                                 <ul class="userInfo">
                                     <li class="userInfoLi">
-                                        <p><span>${card_index+1} ：</span><span class="name">姓名：${card.getLoginUser().getName()!""}</span>
-                                            卡号： <span>${card.getCardNumber()}</span>
-                                            <button class="btn btn-info"> 点击查看详情 </button>
+                                        <p><span>${card_index+1}：</span><span class="name">姓名：${card.getLoginUser().getName()!""}</span>
+                                            卡号：<span>${card.getCardNumber()}</span>
+                                            <button class="btn btn-info find" data-cardNumber="${card.getCardNumber()}"> 同意找回 </button>
                                             <a href="/admin/bankLog.do?cardNumber=${card.getCardNumber()}" class="btn btn-success">点击查看操作记录</a>
                                         </p>
                                     </li>
@@ -84,14 +81,14 @@
                                     <li style="display: none"><p>创建时间：${card.getTime()}</p></li>
                                     <li style="display: none"><p>卡号状态：
                                         <#if card.getActiveFlag() = "normal">
-                                        正常
-                                        <#elseif card.getActiveFlag() = "reportLoss" />
-                                        挂失审核中
-                                        <#elseif card.getActiveFlag() = "loss" />
-                                        已挂失
-                                        <#elseif card.getActiveFlag() = "find" />
-                                        找回审核中
-                                    </#if>
+                                            正常
+                                            <#elseif card.getActiveFlag() = "reportLoss" />
+                                            挂失审核中
+                                            <#elseif card.getActiveFlag() = "loss" />
+                                            已挂失
+                                            <#elseif card.getActiveFlag() = "find" />
+                                            找回审核中
+                                        </#if>
                                     </p></li>
                                 </ul>
                             </#list>
@@ -151,6 +148,21 @@
             show.toggle(250);
             show = $(show.next());
         }
+    });
+    $('.find').click(function () {
+        $.ajax({
+            url: '/admin/doFindCard.do?t=' + new Date().getTime(),
+            type: 'get',
+            dataType: "text",
+            data: {cardNumber: $(this).attr("data-cardNumber")},
+            success: function (msg) {
+                if (msg == 'success') {
+                    location.reload();
+                } else {
+                    alert(msg + " 请重新尝试！");
+                }
+            }
+        });
     });
 </script>
 </body>

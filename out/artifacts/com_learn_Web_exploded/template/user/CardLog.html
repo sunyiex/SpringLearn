@@ -34,7 +34,7 @@
                         <td>${log.getTime()?string("yyyy-MM-dd HH:mm:ss")}</td>
                         <td>转入</td>
                         <td>${log.getOperationMoney()}元</td>
-                        <td>${log.getSrcBankCard().getCardNumber()} - ${log.getSrcBankCard().getLoginUser().getName()}</td>
+                        <td>${log.getSrcBankCard().getCardNumber()} → ${log.getSrcBankCard().getLoginUser().getName()}</td>
                     </tr>
                 </#if>
                 <#if log.getOperationType()=="transferOut">
@@ -42,7 +42,39 @@
                         <td>${log.getTime()?string("yyyy-MM-dd HH:mm:ss")}</td>
                         <td>转出</td>
                         <td>${log.getOperationMoney()}元</td>
-                        <td>${log.getDstBankCard().getCardNumber()} - ${log.getDstBankCard().getLoginUser().getName()}</td>
+                        <td>${log.getDstBankCard().getCardNumber()} → ${log.getDstBankCard().getLoginUser().getName()}</td>
+                    </tr>
+                </#if>
+                <#if log.getOperationType()=="reportLoss">
+                    <tr>
+                        <td>${log.getTime()?string("yyyy-MM-dd HH:mm:ss")}</td>
+                        <td>申请挂失</td>
+                        <td>---</td>
+                        <td>---</td>
+                    </tr>
+                </#if>
+                <#if log.getOperationType()=="loss">
+                    <tr>
+                        <td>${log.getTime()?string("yyyy-MM-dd HH:mm:ss")}</td>
+                        <td>挂失审核</td>
+                        <td>---</td>
+                        <td>---</td>
+                    </tr>
+                </#if>
+                <#if log.getOperationType()=="find">
+                    <tr>
+                        <td>${log.getTime()?string("yyyy-MM-dd HH:mm:ss")}</td>
+                        <td>找回申请</td>
+                        <td>---</td>
+                        <td>---</td>
+                    </tr>
+                </#if>
+                <#if log.getOperationType()=="finded">
+                    <tr>
+                        <td>${log.getTime()?string("yyyy-MM-dd HH:mm:ss")}</td>
+                        <td>找回审核</td>
+                        <td>---</td>
+                        <td>---</td>
                     </tr>
                 </#if>
             </#list>

@@ -29,6 +29,23 @@
         .btn-group {
             margin-left: 25px;
         }
+        #userLog .input{
+            display: block;
+        }
+        ul{
+            margin: 0;
+        }
+        .userInfo li{
+            margin: 0;
+            padding: 5px 0 5px 25px;
+            font-size: 1.2em;
+            background-color: lightskyblue;
+            list-style: none;
+            border-bottom: 1px solid #66ccff;
+        }
+        .userInfo li:hover {
+            background-color: lightsteelblue;
+        }
     </style>
 </head>
 <body>
@@ -47,11 +64,17 @@
                         <li>
                             <a href="/admin/reportLoss.do">挂失操作</a>
                         </li>
+                        <li >
+                            <a href="/admin/find.do">找回操作</a>
+                        </li>
                         <li class="active">
                             <a href="/admin/userLog.do">用户记录查看</a>
                         </li>
                         <li>
                             <a href="/admin/bankLog.do">银行卡记录查看</a>
+                        </li>
+                        <li>
+                            <a href="/admin/logout.do">退出登录</a>
                         </li>
                     </ul>
                     <div class="tab-content">
@@ -59,8 +82,9 @@
                             <div class="select">
                                 <div>
                                     <label for="IDCard">输入身份证</label>
-                                    <input type="text" id="IDCard"/>
-                                    <label for="IDCard">输入姓名</label>
+                                    <input type="text" id="IDCard">
+                                    <i id="black"></i>
+                                    <label for="name">输入姓名</label>
                                     <input type="text" id="name"/>
                                 </div>
 
@@ -84,6 +108,9 @@
                                     </ul>
                                 </div>
                             </div>
+                            <div id="user">
+
+                            </div>
                             <div id="log">
 
                             </div>
@@ -103,16 +130,19 @@
     window.onresize = settab;
     //浏览器当前窗口文档body的高度
     function settab() {
-        if ($(document.body).width() < 500) {
+        if ($(document.body).width() < 600) {
             if ($('.tabbable').hasClass('tabs-left')) {
                 $('.tabbable').addClass('tabs-bleow');
                 $('.tabbable').removeClass('tabs-left');
+                $('#black').addClass("input")
             }
         }
         else {
             if ($('.tabbable').hasClass('tabs-bleow')) {
                 $('.tabbable').addClass('tabs-left');
                 $('.tabbable').removeClass('tabs-bleow');
+                $('#black').removeClass("input")
+
             }
         }
     }
@@ -131,6 +161,16 @@
             success: function (msg) {
                 $('#selectCard').text(text);
                 $('#log').html(msg);
+            }
+        });
+        $.ajax({
+            url: '/admin/getUserInfo.do',
+            data: {
+                IDCard: IDCard
+            },
+            success: function (msg) {
+                $('#selectCard').text(text);
+                $('#user').html(msg);
             }
         });
     }

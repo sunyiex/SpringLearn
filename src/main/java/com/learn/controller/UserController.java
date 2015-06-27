@@ -1,6 +1,7 @@
 package com.learn.controller;
 
 import com.learn.common.utils.*;
+import com.learn.domain.BankCardOperationLog;
 import com.learn.domain.LoginInLog;
 import com.learn.domain.LoginUser;
 import com.learn.domain.BankCard;
@@ -69,19 +70,16 @@ public class UserController {
             modelAndView.setViewName("redirect:/user/result.do");
             return modelAndView;
         }
-
         String username = request.getParameter("IDCard");
         String password = request.getParameter("password");
         password = MD5Util.MD5(password);
-
-
         LoginUser loginUser = loginUserService.findByIDCard(username);
-
         if (loginUser != null) {
             if (password.equals(loginUser.getPassword())) {
                 //登陆成功
                 session.setAttribute("userId", loginUser.getId());
                 session.setAttribute("userIDCard", loginUser.getIDCard());
+                session.setAttribute("user", loginUser);
 
                 modelAndView.addObject("user", loginUser);
                 modelAndView.addObject("message", msg);
@@ -138,7 +136,7 @@ public class UserController {
     }
 
     /**
-     * 注册会员（没有加信息判断）
+     * 注册会员
      * 2015年6月7日14:18:21
      *
      * @param request
@@ -212,7 +210,7 @@ public class UserController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/IDCardInquiry.do", method = RequestMethod.GET)
+    @RequestMapping(value = "/IDCardInquiry.do", method = RequestMethod.GET,produces = "application/json;charset=utf-8")
     @ResponseBody
     public String IDCardInquiry(ModelAndView modelAndView, String IDCard) {
         LoginUser user = loginUserService.findByIDCard(IDCard);
@@ -300,7 +298,7 @@ public class UserController {
      * @param session
      * @return
      */
-    @RequestMapping(value = "/doChangeUserInfo.do", method = RequestMethod.GET)
+    @RequestMapping(value = "/doChangeUserInfo.do", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
     @ResponseBody
     public String doChangeUserInfo(HttpServletRequest request, ModelAndView modelAndView, HttpSession session) {
         String type = request.getParameter("type");
@@ -343,7 +341,7 @@ public class UserController {
      * @param session
      * @return
      */
-    @RequestMapping(value = "/addBankCard.do", method = RequestMethod.GET)
+    @RequestMapping(value = "/addBankCard.do", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
     @ResponseBody
     public String addBankCard(HttpServletRequest request, ModelAndView modelAndView, HttpSession session) {
         String message;
@@ -383,9 +381,45 @@ public class UserController {
      * @param session
      * @return
      */
-    @RequestMapping(value = "/doLossCard.do", method = RequestMethod.GET)
+    @RequestMapping(value = "/doLossCard.do", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
     @ResponseBody
     public String doLossCard(HttpServletRequest request, ModelAndView modelAndView, HttpSession session) {
+        String message = "error";
+        long loginUserId = (Long) session.getAttribute("userId");
+        String loginUserIDCard = (String) session.getAttribute("userIDCard");
+        LoginUser loginUser = loginUserService.findByIDCard(loginUserIDCard);
+        if (loginUser.getId() != loginUserId) {
+            return "用户信息错误";
+        }
+            String cardNumber = request.getParameter("cardNumber");
+            BankCard lossCard = bankCardService.findByCardNumber(cardNumber);
+        for (int i = 0; i < loginUser.getCardList().size(); i++) {
+            if (loginUser.getCardList().get(i).getCardNumber().equals(cardNumber)) {
+                message = "success";
+                break;
+            }
+        }
+        if (!message.equals("success")) {
+            return "该会员没有此卡号： " + cardNumber;
+        }
+        if(!lossCard.getActiveFlag().equals("normal")){
+            return "该卡号目前状态无法执行挂失操作。";
+        }
+        lossCard.setActiveFlag("reportLoss");
+        BankCardOperationLog bankCardOperationLog = new BankCardOperationLog();
+        bankCardOperationLog.setTime(new Date());
+        bankCardOperationLog.setOperationMoney(0);
+        bankCardOperationLog.setOperationType("reportLoss");
+        bankCardOperationLog.setBankCard(lossCard);
+        message = bankCardService.addOperationLog(lossCard, bankCardOperationLog);
+        if (message.equals("success")) {
+            session.setAttribute("user", loginUser);
+        }
+        return message;
+    }
+    @RequestMapping(value = "/doFindCard.do", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
+    @ResponseBody
+    public String doFindCard(HttpServletRequest request, ModelAndView modelAndView, HttpSession session) {
         String message = "error";
         long loginUserId = (Long) session.getAttribute("userId");
         String loginUserIDCard = (String) session.getAttribute("userIDCard");
@@ -404,14 +438,23 @@ public class UserController {
         if (!message.equals("success")) {
             return "该会员没有此卡号： " + cardNumber;
         }
-        lossCard.setActiveFlag("reportLoss");
-        message = bankCardService.save(lossCard);
+        if(!lossCard.getActiveFlag().equals("loss")){
+            return "该卡号目前状态无法执行找回操作。";
+        }
+        lossCard.setActiveFlag("find");
+
+        BankCardOperationLog bankCardOperationLog = new BankCardOperationLog();
+        bankCardOperationLog.setTime(new Date());
+        bankCardOperationLog.setOperationMoney(0);
+        bankCardOperationLog.setOperationType("find");
+        bankCardOperationLog.setBankCard(lossCard);
+        message = bankCardService.addOperationLog(lossCard, bankCardOperationLog);
+
         if (message.equals("success")) {
             session.setAttribute("user", loginUser);
         }
         return message;
     }
-
     /**
      * 删除卡号
      * 2015年6月7日14:16:11
@@ -421,7 +464,7 @@ public class UserController {
      * @param session
      * @return
      */
-    @RequestMapping(value = "/deleteBankCard.do", method = RequestMethod.GET)
+    @RequestMapping(value = "/deleteBankCard.do", method = RequestMethod.GET,produces = "application/json;charset=utf-8" )
     @ResponseBody
     public String deleteBankCard(HttpServletRequest request, ModelAndView modelAndView, HttpSession session) {
         String message = "error";

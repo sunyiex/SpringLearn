@@ -8,7 +8,7 @@ import java.util.Date;
  * 请求操作，比如挂失
  */
 @Entity
-public class cardOperation extends BaseObject{
+public class CardOperation extends BaseObject{
 //  银行卡ID
     private long bankCardId;
 //  用户ID

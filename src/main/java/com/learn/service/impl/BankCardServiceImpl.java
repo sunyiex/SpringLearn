@@ -85,6 +85,10 @@ public class BankCardServiceImpl implements BankCardService {
     public Page<BankCard> findAll(PageRequest pageRequest){
         return bankCardDao.findAll(pageRequest);
     }
+    public Page<BankCard> getByActiveFlag(String activeFlag,PageRequest pageRequest){
+        return bankCardDao.getByActiveFlag(activeFlag,pageRequest);
+    }
+
     public String delete(BankCard bankCard) {
         try {
             bankCardDao.delete(bankCard);
@@ -116,6 +120,14 @@ public class BankCardServiceImpl implements BankCardService {
         }
         return this.addOperationLog(bankCard,bankCardOperationLog);
     }
+
+    /**
+     * 转账
+     * @param bankCard
+     * @param dstBankCard
+     * @param money
+     * @return
+     */
     public String transfer(BankCard bankCard, BankCard dstBankCard, float money) {
         BankCardOperationLog srcbankCardOperationLog = new BankCardOperationLog();
         srcbankCardOperationLog.setBankCard(bankCard);

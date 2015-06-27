@@ -1,0 +1,14 @@
+<ul class="userInfo">
+    <li class="userInfoLi">
+        <p><span></span><span class="name">姓名：${user.getName()!""}</span>
+            性别：
+            <#if user.getSex()="male"><span class="sex">男</span>
+                <#else/>
+                <span class="sex">女</span></#if>
+        </p>
+    </li>
+    <li><p>身份证号：${user.getIDCard()!""}</p></li>
+    <li><p>出生年月：${user.getBirthday()?string('yyyy年MM月dd日')}</p></li>
+    <li><p>手机号码：${user.getPhone()!""}</p></li>
+    <li><p>email：${user.getEmail()!""}</p></li>
+</ul>

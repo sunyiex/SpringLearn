@@ -6,9 +6,10 @@
     <style>
         .userInfo .userInfoLi {
             background-color: skyblue;
+            border: 1px solid #31708f;
             border-bottom: 1px solid #0f0f0f;
-            border-top: 1px solid #31708f;
             margin: 0;
+            box-shadow: 2px 2px 10px #888888;
         }
         .userInfo .userInfoLi:hover{
             background-color: lightcyan;
@@ -19,17 +20,22 @@
             font-size: 1.2em;
             background-color: lightskyblue;
             list-style: none;
-            border-bottom: 1px solid #66ccff;
+            border: 1px solid #66ccff;
+        }
+        .tabs-bleow .userInfo{
+            margin-left: -10px;
         }
         .userInfo li:hover {
             background-color: lightblue;
         }
-
+        .sex{
+            margin-right: 25px;
+        }
         .btn{
-            margin-left: 50px;
+            margin-top: 10px;
         }
         .name{
-            width: 200px;
+            min-width: 150px;
             display: inline-block;
         }
     </style>
@@ -51,11 +57,17 @@
                         <li>
                             <a href="/admin/reportLoss.do">挂失操作</a>
                         </li>
+                        <li >
+                            <a href="/admin/find.do">找回操作</a>
+                        </li>
                         <li>
                             <a href="/admin/userLog.do">用户记录查看</a>
                         </li>
                         <li>
                             <a href="/admin/bankLog.do">银行卡记录查看</a>
+                        </li>
+                        <li>
+                            <a href="/admin/logout.do">退出登录</a>
                         </li>
                     </ul>
                     <div id="myTabContent" class="tab-content">
@@ -63,11 +75,11 @@
                             <#list page.getContent() as user>
                                 <ul class="userInfo">
                                     <li class="userInfoLi">
-                                        <p><span>${user_index+1} ：</span><span class="name">姓名：&nbsp;&nbsp;${user.getName()!""}</span>&nbsp;&nbsp;&nbsp;
-                                        性别：&nbsp;&nbsp;
-                                        <#if user.getSex()="male"><span>男</span>
+                                        <p><span>${user_index+1} ：</span><span class="name">姓名：${user.getName()!""}</span>
+                                        性别：
+                                        <#if user.getSex()="male"><span class="sex">男</span>
                                             <#else/>
-                                            <span>女</span></#if>
+                                            <span class="sex">女</span></#if>
                                             <button class="btn btn-info"> 点击查看详情 </button>
                                             <a href="/admin/userLog.do?IDCard=${user.getIDCard()}" class="btn btn-success">点击查看登陆记录</a>
                                         </p>

@@ -330,9 +330,9 @@
             CheckButton();
         }
     }
-    $('#dstCardNumber').bind('keyup', checkCard);
-    $('#dstName').bind('keyup', checkName);
-    $('#transferMoney').bind('keyup', checkMoney);
+    $('#dstCardNumber').bind('keyup blur', checkCard);
+    $('#dstName').bind('keyup blur', checkName);
+    $('#transferMoney').bind('keyup blur', checkMoney);
 </script>
 <script>
     function transferData() {

@@ -109,22 +109,37 @@
                         <#list cardList as card>
                             <li>
                                 <span class="card">${card.getCardNumber()}</span>
+
                                 <#if card.getActiveFlag() == "normal">
                                     <span class="card">卡号状态 ：正常</span>
-                                    <#else />
+                                    <#elseif card.getActiveFlag() = "reportLoss" />
+                                    <span class="card">卡号状态 ：挂失审核中</span>
+                                    <#elseif card.getActiveFlag() = "loss" />
                                     <span class="card">卡号状态 ：已挂失</span>
+                                    <#elseif card.getActiveFlag() = "find" />
+                                    <span class="card">卡号状态 ：找回审核中</span>
                                 </#if>
-
-                                <button class="btn btn-warning btn-change cardLoss" cardnumber="${card.getCardNumber()}"
-                                        data-toggle="modal"
-                                        data-target="#loss">
+                                <#if card.getActiveFlag() = "normal">
+                                    <button class="btn btn-warning btn-change cardLoss" cardnumber="${card.getCardNumber()}"
+                                            data-toggle="modal"
+                                            data-target="#loss" >
                                     挂失
-                                </button>
+                                    </button>
+                                    <#elseif  card.getActiveFlag() = "loss"/>
+                                    <button class="btn btn-success btn-change cardFind" cardnumber="${card.getCardNumber()}"
+                                            data-toggle="modal"
+                                            data-target="#find" >
+                                        找回
+                                    </button>
+                                </#if>
                                 <button class="btn btn-danger btn-change cardDelete"
                                         cardnumber="${card.getCardNumber()}" data-toggle="modal"
                                         data-target="#delete">
                                     删除
                                 </button>
+
+
+
 
                             </li>
                         </#list>
@@ -208,6 +223,25 @@
                 </div>
                 <!-- /.modal -->
             </div>
+
+        <div class="modal fade" id="find" tabindex="-1" role="dialog"
+             aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <p>是否找回了卡号：<span id="findCardNumber" ></span> 吗?</p>
+                        <button type="button" class="cardbtn btn btn-success"
+                                data-dismiss="modal">取消
+                        </button>
+                        <button type="button" id="findCard" class="cardbtn btn btn-danger" type="submit">
+                            确定
+                        </button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal -->
+        </div>
 
         </div>
     </div>
@@ -310,6 +344,10 @@
             var cardnumber = $(this).attr("cardnumber");
             $('#lossCardnumber').text(cardnumber);
         });
+        $('.cardFind').click(function () {
+            var cardnumber = $(this).attr("cardnumber");
+            $('#findCardNumber').text(cardnumber);
+        });
         $('#deleteCard').click(function () {
             $.ajax({
                 url: '/user/deleteBankCard.do?t=' + new Date().getTime(),
@@ -334,6 +372,21 @@
                 type: 'get',
                 dataType: "text",
                 data: {cardNumber: $('#lossCardnumber').text()},
+                success: function (msg) {
+                    if (msg == 'success') {
+                        location.reload();
+                    } else {
+                        alert(msg + " 请重新尝试！");
+                    }
+                }
+            });
+        });
+        $('#findCard').click(function () {
+            $.ajax({
+                url: '/user/doFindCard.do?t=' + new Date().getTime(),
+                type: 'get',
+                dataType: "text",
+                data: {cardNumber: $('#findCardNumber').text()},
                 success: function (msg) {
                     if (msg == 'success') {
                         location.reload();
