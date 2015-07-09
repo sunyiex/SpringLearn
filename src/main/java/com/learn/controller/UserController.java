@@ -72,7 +72,8 @@ public class UserController {
         }
         String username = request.getParameter("IDCard");
         String password = request.getParameter("password");
-        password = MD5Util.MD5(password);
+//        password = MD5Util.MD5(password);
+       password = password.toUpperCase();
         LoginUser loginUser = loginUserService.findByIDCard(username);
         if (loginUser != null) {
             if (password.equals(loginUser.getPassword())) {
@@ -690,6 +691,7 @@ public class UserController {
             return modelAndView;
         }
         if (session.getAttribute("emailStartTime") == null) {
+            session.setAttribute("emailStartTime", System.currentTimeMillis());
             session.setAttribute("emailStartTime", System.currentTimeMillis());
         } else {
             if (!checkEmailTimeOut(System.currentTimeMillis(), (Long) session.getAttribute("emailStartTime"))) {

@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <#include "../common/header.html"/>
+    <script type="text/javascript" src="/template/import/jquery.md5.js"></script>
+
     <title>银行用户首页</title>
     <style>
         body {
@@ -294,6 +296,13 @@
     $('#kaptcha').bind("keyup blur", function () {
         $('#J_login').prop('disabled', false);
         $('#kaptcha').unbind("keyup blur");
+    });
+</script>
+<script>
+    $('#J_login').click(function(e){
+        var psd = $('#inputPassword').val();
+        psd = $.md5(psd);
+        $('#inputPassword').val(psd)
     });
 </script>
 </body>

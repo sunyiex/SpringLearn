@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,6 +79,15 @@ public class MathTest {
 
         org.springframework.util.Assert.isTrue(check("male|female", sexRegExp));
 //
+    }
+
+    @Test
+    public void MD5test() throws NoSuchAlgorithmException {
+        String s = "123";
+       String a =  MD5Util.MD5(s);
+       String b =  MD5Util.MD52(s);
+        Assert.assertEquals(a, b);
+
     }
 
 
